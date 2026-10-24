@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const base=process.env.TEST_BASE_URL||'http://127.0.0.1:3000';
+test('fluxo HTTP: autenticação, CSRF, CRUD, ordem, persistência e conflitos',{skip:!process.env.TEST_ADMIN_PASSWORD},async()=>{
+ const json={'Content-Type':'application/json',Origin:base};
+ const unauthorized=await fetch(base+'/api/config',{method:'PUT',headers:json,body:'{}'});assert.equal(unauthorized.status,401);
+ const csrf=await fetch(base+'/api/auth/login',{method:'POST',headers:{...json,Origin:'https://externo.example'},body:JSON.stringify({login:'admin',password:'invalida'})});assert.equal(csrf.status,403);
+ const login=await fetch(base+'/api/auth/login',{method:'POST',headers:json,body:JSON.stringify({login:'admin',password:process.env.TEST_ADMIN_PASSWORD})});assert.equal(login.status,200);const cookie=login.headers.get('set-cookie')!.split(';')[0];assert.match(login.headers.get('set-cookie')!,/HttpOnly/i);
+ const headers={...json,Cookie:cookie};const initial=await fetch(base+'/api/config',{headers}).then(r=>r.json());let version=initial.version;
+ try{
+ const config=structuredClone(initial.config);config.profile.name='Teste de persistência';config.links.reverse();config.links[0].enabled=false;config.links[1].icon='whatsapp';config.links.push({id:'teste-http',title:'Novo link de teste',description:'Criado no teste',url:'https://example.com',icon:'link',enabled:true,featured:false,live:false,direct:false});
+ let response=await fetch(base+'/api/config',{method:'PUT',headers,body:JSON.stringify({config,version})});assert.equal(response.status,200);version=(await response.json()).version;
+ const read=await fetch(base+'/api/config',{headers}).then(r=>r.json());assert.equal(read.config.profile.name,'Teste de persistência');assert.equal(read.config.links[0].id,config.links[0].id);assert.equal(read.config.links[1].icon,'whatsapp');
+ const publicRead=await fetch(base+'/api/config').then(r=>r.json());assert.equal(publicRead.config.links.some((l:{id:string})=>l.id===config.links[0].id),false);
+ response=await fetch(base+'/api/config',{method:'PUT',headers,body:JSON.stringify({config,version:initial.version})});assert.equal(response.status,409);
+ config.links=config.links.filter((l:{id:string})=>l.id!=='teste-http');response=await fetch(base+'/api/config',{method:'PUT',headers,body:JSON.stringify({config,version})});assert.equal(response.status,200);version=(await response.json()).version;
+ const invalid=structuredClone(config);invalid.links[0].url='javascript:alert(1)';response=await fetch(base+'/api/config',{method:'PUT',headers,body:JSON.stringify({config:invalid,version})});assert.equal(response.status,400);
+ }finally{const restore=await fetch(base+'/api/config',{method:'PUT',headers,body:JSON.stringify({config:initial.config,version})});assert.equal(restore.status,200);}
+ const logout=await fetch(base+'/api/auth/logout',{method:'POST',headers});assert.equal(logout.status,200);assert.match(logout.headers.get('set-cookie')!,/Max-Age=0/);
+});

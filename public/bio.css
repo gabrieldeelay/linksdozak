@@ -1,0 +1,591 @@
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET
+   ═══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+img,picture,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:where(h1,h2,h3,p){overflow-wrap:break-word}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  /* superfícies */
+  --bg:        #050A17;
+  --bg-2:      #08122A;
+  --card:      rgba(255,255,255,.035);
+  --card-h:    rgba(255,255,255,.06);
+  --card-solid:#141925;   /* o mesmo --card-h já composto sobre --bg: a técnica
+                             de borda em gradiente exige camada de cima OPACA,
+                             senão o gradiente vaza para dentro do card */
+  --line:      rgba(255,255,255,.08);
+  --line-p:    rgba(45,107,255,.45);
+
+  /* marca — azul desde 02/10/2026 (antes roxo #6E3BFF) */
+  --blue:      #2D6BFF;   /* preenchimentos, bordas, glows — NUNCA texto pequeno */
+  --blue-2:    #4D8DFF;
+  --blue-3:    #8DB8FF;   /* ESTE é o azul de texto (9.82:1 sobre o fundo) */
+  --cyan:      #1AA6F0;   /* o azul do Corvette, só em gradientes de detalhe */
+  --grad:      linear-gradient(135deg,#2D6BFF 0%,#4D8DFF 55%,#8DB8FF 100%);
+  --grad-ig:   linear-gradient(45deg,#F09433,#E6683C 25%,#DC2743 50%,#CC2366 75%,#BC1888);
+  --red-yt:    #FF0033;
+  --blue-tg:   #29A9EA;
+  --teal-live: #35E0C0;
+  --green-app: #00DC99;   /* o verde do ícone do app — borda e tile, nunca texto */
+  --beam:      #4D8DFF;   /* o feixe de luz que circula o avatar */
+
+  /* CONTRASTE (medido, não estimado): texto branco sobre #4D8DFF dá
+     3.20:1 e reprova em AA. Superfície que CARREGA TEXTO vai de #1C4FE6
+     (6.34:1) a #2A66FF (4.73:1). O --grad claro fica só em decoração. */
+  --grad-cta:  linear-gradient(135deg,#1C4FE6 0%,#2A66FF 100%);
+
+  /* texto */
+  --text:      #FFFFFF;   /* 19.8:1 */
+  --text-2:    #B4BDD0;   /* 10.5:1 */
+  --text-3:    #8590A8;   /* 6.2:1 no fundo, 5.8:1 sobre card e 5.5:1 no card
+                             em hover — passa em AA nos rótulos mono de 11px */
+
+  /* efeitos */
+  --glow-p:    0 8px 32px rgba(45,107,255,.18);
+  --glow-cta:  0 12px 40px rgba(45,107,255,.35);
+  --glow-rad:  radial-gradient(circle, rgba(45,107,255,.25) 0%, rgba(0,0,0,0) 70%);
+
+  /* tipografia */
+  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --name:  clamp(1.875rem, 5vw, 2.5rem);
+  --h2:    clamp(1.25rem, 3vw, 1.6rem);
+  --link:  1.0625rem;
+  --body:  .9375rem;
+  --label: .6875rem;
+
+  /* forma e ritmo — grade base 4px */
+  --col:   560px;
+  --gut:   20px;
+  --r-tile:12px; --r-card:16px; --r-hero:18px;
+
+  /* movimento */
+  --ease:  cubic-bezier(.16,1,.3,1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════ */
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{width:100%;max-width:var(--col);margin-inline:auto;padding-inline:var(--gut)}
+.mono{font-family:var(--mono);font-weight:500}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* foco visível — nunca removido */
+a:focus-visible,button:focus-visible{
+  outline:2px solid var(--blue-3);
+  outline-offset:3px;
+  border-radius:var(--r-card);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENTES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* — pill / badge — */
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 12px;border-radius:999px;
+  background:rgba(45,107,255,.14);
+  border:1px solid rgba(45,107,255,.35);
+  color:var(--blue-3);
+  font-family:var(--mono);font-weight:500;
+  font-size:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  line-height:1;
+}
+.badge i{width:5px;height:5px;border-radius:999px;background:currentColor;flex:none}
+
+/* — ícones — */
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round}
+.ic--fill{fill:currentColor;stroke:none}
+/* a marca tem proporção 1,38:1 — num quadro de 20px ela sairia com só 14,5px
+   de altura e pesaria menos que os ícones quadrados. Ganha largura para
+   igualar. A regra do botão precisa ser tão específica quanto `.btn .ic`. */
+.ic--marca{width:24px;height:24px}
+
+/* — tile de ícone — */
+.tile{
+  width:40px;height:40px;flex:none;
+  display:grid;place-items:center;
+  border-radius:var(--r-tile);
+  transition:transform .2s ease-out;
+}
+
+/* — CARD DE LINK (base) — */
+.card{
+  position:relative;
+  display:flex;align-items:center;gap:14px;
+  min-height:68px;padding:0 16px;
+  border-radius:var(--r-card);
+  background:var(--card);
+  border:1px solid var(--line);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:transform .2s ease-out, border-color .2s ease-out,
+             box-shadow .2s ease-out, background-color .2s ease-out;
+}
+.card__txt{min-width:0;flex:1}
+.card__t{
+  display:flex;align-items:center;gap:8px;
+  font-size:var(--link);font-weight:600;line-height:1.25;letter-spacing:-.01em;
+}
+.card__s{
+  display:block;margin-top:3px;
+  font-family:var(--sans);font-weight:500;
+  font-size:.8125rem;color:var(--text-3);
+  letter-spacing:0;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.card__go{color:var(--text-3);flex:none;transition:transform .2s ease-out,color .2s ease-out}
+.card__go .ic{width:18px;height:18px}
+
+/* — CARD 1 · destaque — */
+.card--hero{
+  min-height:76px;
+  border-radius:var(--r-hero);
+  background:var(--grad-cta);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:var(--glow-cta);
+  overflow:hidden;                       /* contém o shine sweep (M-05) */
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+.card--hero .card__t{font-size:var(--link);font-weight:700;color:#fff}
+.card--hero .card__s{
+  color:#fff;                            /* sólido: rgba(...,.72) do brief dá
+                                            2.88:1 sobre o gradiente e reprova.
+                                            A hierarquia vem do corpo e da caixa
+                                            do tipo, não da opacidade. */
+}
+.card--hero .card__go{color:#fff}
+.card--hero .tile{
+  width:44px;height:44px;
+  background:rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+}
+.card--hero .ic{stroke-width:1.9}
+
+/* — tiles por destino — */
+.card--tg  .tile{background:rgba(41,169,234,.14); color:var(--blue-tg)}
+.card--ig  .tile{background:rgba(220,39,67,.14)}
+.card--yt  .tile{background:rgba(255,0,51,.14);   color:var(--red-yt)}
+
+/* — App de Gerenciamento: borda verde de leve, no verde do próprio ícone — */
+.card--app{border-color:rgba(0,220,153,.30)}
+.card--app .tile{background:rgba(0,220,153,.10)}
+.card--app .tile img{width:31px;height:auto}
+
+/* ponto "ao vivo" do Telegram (M-08) */
+.live{position:relative;width:8px;height:8px;flex:none;border-radius:999px;
+      background:var(--teal-live);display:inline-block}
+.live::after{content:'';position:absolute;inset:0;border-radius:999px;
+      box-shadow:0 0 0 0 rgba(53,224,192,.65)}
+
+/* — BOTÃO CTA (S4 e barra fixa) — */
+.btn{
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:60px;padding:0 22px;
+  border-radius:var(--r-hero);
+  background:var(--grad-cta);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:var(--glow-cta);
+  color:#fff;font-size:var(--link);font-weight:700;letter-spacing:-.01em;
+  transition:transform .2s ease-out, box-shadow .2s ease-out;
+}
+.btn .ic{width:18px;height:18px}
+.btn .ic--marca{width:22px;height:22px}   /* precisa vir DEPOIS: mesma especificidade */
+.btn__go{display:inline-flex;transition:transform .2s ease-out}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇÕES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── S1 · HERO ────────────────────────────────────────────────── */
+.hero{
+  position:relative;isolation:isolate;
+  min-height:72vh;
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  text-align:center;
+  padding-top:104px;
+}
+/* wrapper do parallax (M-02): o translate mora aqui, o zoom mora na <img>,
+   para os dois transforms não brigarem pela mesma propriedade */
+.hero__media{
+  position:absolute;inset:-6% 0 0;z-index:-2;
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 54%,rgba(0,0,0,0) 92%);
+          mask-image:linear-gradient(180deg,#000 0%,#000 54%,rgba(0,0,0,0) 92%);
+  background:var(--bg) url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABIMDRANCxIQDhAUExIVGywdGxgYGzYnKSAsQDlEQz85Pj1HUGZXR0thTT0+WXlaYWltcnNyRVV9hnxvhWZwcm7/2wBDARMUFBsXGzQdHTRuST5Jbm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm7/wAARCAAOABQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDj1gkuWxbwEEDJCkkfrWle2Mp0qIqhby3bLAYwuABx9c811T38E8AjmtUdRzyMc+vFZ7zWsM/nJA+9TkAyMVz9M4oTVgalc5aG3l8sERRsD3brRXTy+IZC5zGv/fIoqdSvdP/Z") center bottom/cover no-repeat;
+  will-change:transform;
+}
+/* <picture> precisa de altura definida, senão o height:100% da <img>
+   cai para auto e a foto renderiza na proporção intrínseca */
+.hero__media picture{display:block;width:100%;height:100%}
+/* ancorada pela BASE: o conteúdo do hero também é ancorado embaixo, então o
+   carro fica logo acima do avatar seja qual for a altura da tela. O zoom está
+   no recorte dos arquivos (o carro ocupa ~83% da largura no celular). */
+.hero__img{width:100%;height:100%;object-fit:cover;object-position:50% 100%;transform-origin:50% 100%}
+/* overlay em três paradas: funde a foto no fundo da página sem corte visível */
+.hero__scrim{
+  position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    linear-gradient(180deg,                /* fade azul de cima */
+      rgba(28,79,230,.78) 0%,
+      rgba(28,79,230,.46) 14%,
+      rgba(28,79,230,.16) 30%,
+      rgba(28,79,230,0) 46%),
+    linear-gradient(180deg,
+    rgba(0,0,0,.35) 0%,
+    rgba(0,0,0,.55) 46%,
+    rgba(5,10,23,.88) 78%,
+    rgba(5,10,23,0) 100%);
+}
+.hero__glow{
+  position:absolute;left:50%;top:58%;z-index:-1;
+  width:min(760px,120vw);aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  background:var(--glow-rad);pointer-events:none;
+}
+.hero__mark{
+  /* centrado sem transform: o transform é da animação de entrada (.rv), que
+     zerava o translateX(-50%) e deixava o logo meio ícone fora do eixo */
+  position:absolute;top:32px;left:0;right:0;margin-inline:auto;
+  width:40px;height:40px;
+}
+/* halo escuro primeiro: o logo é azul e agora fica em cima do fade azul.
+   O seletor longo vence o `filter:none` do .rv.in, que apagava esta sombra
+   depois da entrada. */
+.hero__mark,.js .hero__mark.rv.in{
+  filter:drop-shadow(0 0 10px rgba(5,10,23,.9)) drop-shadow(0 4px 18px rgba(45,107,255,.45));
+}
+.hero__content{display:flex;flex-direction:column;align-items:center;padding-bottom:4px}
+
+/* avatar + feixe de luz circulando (M-06)
+   trilho azul apagado + um feixe azul com cauda e ponta quase branca que dá
+   a volta; o halo é
+   o mesmo cone desfocado, e a foto por cima esconde a parte de dentro */
+.ava{position:relative;width:112px;height:112px;margin-bottom:22px}
+.ava::before{                       /* trilho: aro fino e estático */
+  content:'';position:absolute;inset:-6px;border-radius:999px;
+  background:rgba(45,107,255,.24);     /* apagado: quem brilha é o feixe */
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));
+}
+.ava::after{                        /* glow externo, estático */
+  content:'';position:absolute;inset:-16px;border-radius:999px;
+  background:var(--glow-rad);z-index:-1;
+}
+.ava__feixe,.ava__halo{
+  position:absolute;border-radius:999px;pointer-events:none;
+  background:conic-gradient(from 0deg,
+    rgba(77,141,255,0) 0deg, rgba(77,141,255,0) 200deg,
+    rgba(77,141,255,.55) 300deg, var(--beam) 340deg, #EAF2FF 358deg,
+    rgba(77,141,255,0) 360deg);
+  animation:spin 3.2s linear infinite;
+}
+.ava__feixe{
+  inset:-6px;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
+}
+.ava__halo{inset:-8px;filter:blur(9px);opacity:.85;z-index:-1}
+.ava img{
+  position:relative;width:112px;height:112px;border-radius:999px;
+  object-fit:cover;background:var(--bg-2);
+  box-shadow:0 0 0 3px var(--bg);   /* respiro escuro entre a foto e o aro */
+}
+
+.name{
+  margin-top:14px;text-wrap:balance;
+  font-size:var(--name);font-weight:800;line-height:1.05;letter-spacing:-.02em;
+}
+.handle{
+  margin-top:8px;padding:4px 8px;border-radius:8px;
+  font-family:var(--sans);font-weight:700;font-size:.875rem;
+  color:var(--text-2);letter-spacing:0;
+  transition:color .18s ease-out,background-color .18s ease-out;
+}
+.handle b{color:var(--blue-3);font-weight:700}
+.handle:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.handle[data-copied="1"]{color:var(--blue-3)}
+.bio{
+  margin-top:10px;max-width:32ch;text-wrap:balance;
+  font-size:var(--body);line-height:1.6;color:var(--text-2);
+}
+
+/* sentinela do sticky (M-10) e fade curto do handle (M-09) */
+#sHero{display:block;width:100%;height:1px}
+#handleTxt{display:inline-block;transition:opacity .13s ease-out}
+
+/* ── ASSINATURA · a linha central ──────────────────────────────
+   Nasce no avatar e morre exatamente no CTA final. Ela não decora:
+   marca o único caminho que a página oferece.                        */
+.stack{position:relative;padding-top:34px}
+.stack::before{
+  content:'';position:absolute;z-index:0;
+  left:50%;top:0;bottom:var(--spine-end,96px);width:1px;
+  transform:translateX(-.5px);
+  background:repeating-linear-gradient(180deg,
+    rgba(141,184,255,.34) 0 5px, transparent 5px 15px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 7%,#000 90%,transparent);
+          mask-image:linear-gradient(180deg,transparent,#000 7%,#000 90%,transparent);
+  pointer-events:none;
+}
+.stack > *{position:relative;z-index:1}
+
+/* ── S2 · VITRINE DE LINKS ────────────────────────────────────── */
+.links{display:flex;flex-direction:column;gap:14px}
+.noscript{
+  padding:12px 16px;border-radius:var(--r-card);
+  background:rgba(255,0,51,.10);border:1px solid rgba(255,0,51,.34);
+  font-size:.8125rem;color:#FFC9D2;
+}
+
+/* ── S3 · FAIXA DE CONTEXTO ───────────────────────────────────── */
+.ctx{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ctx__i{
+  padding:16px 14px 18px;border-radius:var(--r-card);
+  background:var(--bg-2);                   /* opaco de propósito: a linha central
+                                            passa por trás e some aqui, em vez de
+                                            cortar o card ao meio */
+  border:1px solid var(--line-p);
+  box-shadow:var(--glow-p);
+  text-align:left;
+}
+.ctx__ic{
+  width:34px;height:34px;margin-bottom:12px;border-radius:10px;
+  display:grid;place-items:center;
+  background:rgba(45,107,255,.16);color:var(--blue-3);
+}
+.ctx__ic .ic{width:17px;height:17px}
+.ctx__t{
+  font-family:var(--mono);font-weight:500;font-size:var(--label);
+  text-transform:uppercase;letter-spacing:.12em;color:var(--blue-3);
+  line-height:1.35;
+}
+.ctx__p{margin-top:7px;font-size:.8125rem;line-height:1.5;color:var(--text-2)}
+
+/* ── S4 · CTA DE FECHAMENTO ───────────────────────────────────── */
+.close{margin-top:48px;text-align:center}
+.close__h{text-wrap:balance;font-size:1.25rem;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.close__b{margin-top:18px}
+
+/* ── S5 · RODAPÉ ──────────────────────────────────────────────── */
+.foot{
+  margin-top:56px;padding:28px 0 40px;
+  border-top:1px solid var(--line);
+  text-align:center;
+}
+.foot__id{display:flex;align-items:center;justify-content:center;gap:9px}
+.foot__id img{width:22px;height:22px;opacity:.9}
+.foot__id span{font-size:.875rem;font-weight:600;letter-spacing:-.01em}
+.foot__c{margin-top:10px;font-size:.75rem;color:var(--text-3)}
+.foot__r{margin-top:14px;font-size:.75rem;line-height:1.55;color:var(--text-3);max-width:44ch;margin-inline:auto}
+
+/* ── S6 · BARRA FIXA (mobile) ─────────────────────────────────── */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  display:none;
+  padding:12px var(--gut) calc(12px + env(safe-area-inset-bottom));
+  background:rgba(5,10,23,.88);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  transform:translateY(100%);
+  transition:transform .32s var(--ease);
+}
+.dock.is-on{transform:translateY(0)}
+.dock .btn{min-height:52px}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION
+   Vitrine de links é página de decisão rápida: o movimento serve
+   para levar o olho até o card 1 e dar tato ao clique. Só transform,
+   opacity e filter — nada de width/height/top/left.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* M-01 · aurora drift — duas manchas dessincronizadas no fundo */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;display:block;border-radius:999px;
+  filter:blur(80px);opacity:.35;will-change:transform}
+.aurora i:nth-child(1){
+  width:600px;height:600px;left:-16%;top:22%;
+  background:radial-gradient(circle,var(--blue) 0%,rgba(45,107,255,0) 68%);
+  animation:au1 28s ease-in-out infinite alternate;
+}
+.aurora i:nth-child(2){
+  width:420px;height:420px;right:-14%;top:58%;
+  background:radial-gradient(circle,var(--cyan) 0%,rgba(26,166,240,0) 68%);
+  animation:au2 37s ease-in-out infinite alternate;
+}
+@keyframes au1{from{transform:translate3d(0,0,0)}to{transform:translate3d(90px,-70px,0)}}
+@keyframes au2{from{transform:translate3d(0,0,0)}to{transform:translate3d(-80px,60px,0)}}
+
+/* M-02 · Ken Burns (o parallax do wrapper é aplicado por JS) */
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.06)}}
+.hero__img{animation:kb 18s cubic-bezier(.2,.6,.2,1) forwards}
+.js .hero__img{opacity:0;transition:opacity .55s ease-out}
+.js .hero__img.is-ready{opacity:1}
+
+/* M-03 · entrada em cascata */
+.js .rv{opacity:0;transform:translateY(16px);filter:blur(8px)}
+.js .rv.in{
+  opacity:1;transform:none;filter:none;
+  transition:opacity .62s var(--ease),transform .62s var(--ease),filter .62s var(--ease);
+  transition-delay:calc(var(--d,0) * 70ms);
+}
+
+/* M-04 · card lift */
+/* Os estados EXCLUEM o card destaque de propósito: uma regra de estado
+   (.card:hover = 0,2,0) vence o fundo base do destaque (.card--hero = 0,1,0)
+   e apagaria o gradiente do CTA justamente no hover e no foco. */
+@media (hover:hover){
+  .card:not(.card--hero):hover{
+    transform:translateY(-3px);background:var(--card-h);
+    border-color:var(--line-p);box-shadow:var(--glow-p);
+  }
+  .card:hover .tile{transform:scale(1.06)}
+  .card:hover .card__go{transform:translateX(4px)}
+  .card:not(.card--hero):hover .card__go{color:var(--blue-3)}
+  /* borda em gradiente Instagram — só no hover, para não poluir o repouso.
+     Mesma especificidade da regra acima, declarada depois. */
+  .card--ig:not(.card--hero):hover{
+    border-color:transparent;
+    background:linear-gradient(var(--card-solid),var(--card-solid)) padding-box,
+               var(--grad-ig) border-box;
+  }
+  /* o app mantém o verde no hover, só mais aceso */
+  .card--app:not(.card--hero):hover{
+    border-color:rgba(0,220,153,.58);box-shadow:0 8px 32px rgba(0,220,153,.14);
+  }
+  .card--app:not(.card--hero):hover .card__go{color:#5CF2C4}
+  .card--hero:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
+  .btn:hover .btn__go{transform:translateX(4px)}
+}
+/* teclado recebe o mesmo estado do mouse */
+.card:not(.card--hero):focus-visible{transform:translateY(-3px);background:var(--card-h);box-shadow:var(--glow-p)}
+.card--app:not(.card--hero):focus-visible{box-shadow:0 8px 32px rgba(0,220,153,.14)}
+.card--hero:focus-visible{transform:translateY(-3px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
+/* toque: mesmo estado, mais rápido */
+.card:active,.btn:active{transform:translateY(-3px);transition-duration:.12s}
+.btn:active{transform:translateY(-1px) scale(.995)}
+
+/* M-05 · shine sweep — passada de 1,5s + 3s de pausa (ciclo 4,5s) */
+.card--hero::after,.btn::after{
+  content:'';position:absolute;top:-60%;left:-70%;
+  width:42%;height:220%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  animation:sweep 4.5s var(--ease) infinite;
+}
+@keyframes sweep{
+  0%  {transform:rotate(16deg) translateX(0);opacity:0}
+  5%  {opacity:1}
+  30% {transform:rotate(16deg) translateX(430%);opacity:1}
+  35% {transform:rotate(16deg) translateX(430%);opacity:0}
+  100%{transform:rotate(16deg) translateX(430%);opacity:0}
+}
+
+/* M-06 · anel do avatar */
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* M-07 · cursor spotlight (desligado em toque, via JS) */
+.spot{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;
+  transition:opacity .3s ease-out;
+  background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),
+    rgba(45,107,255,.12) 0%, rgba(45,107,255,0) 70%);
+}
+.spot.is-on{opacity:1}
+
+/* M-08 · live dot */
+@keyframes pulse{
+  0%  {box-shadow:0 0 0 0 rgba(53,224,192,.55)}
+  70% {box-shadow:0 0 0 7px rgba(53,224,192,0)}
+  100%{box-shadow:0 0 0 0 rgba(53,224,192,0)}
+}
+.live::after{animation:pulse 2s ease-out infinite}
+
+/* camadas: aurora e spotlight atrás, conteúdo à frente */
+.hero,main,.foot{position:relative;z-index:2}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ═══════════════════════════════════════════════════════════════ */
+@supports (height:100svh){.hero{min-height:72svh}}
+
+@media (max-width:1023px){
+  .hero{min-height:64vh;padding-top:92px}
+}
+@supports (height:100svh){
+  @media (max-width:1023px){.hero{min-height:64svh}}
+}
+
+@media (max-width:719px){
+  .hero{min-height:68vh;padding-top:84px}
+  .ava{width:92px;height:92px;margin-bottom:16px}
+  .ava img{width:92px;height:92px}
+  .hero__mark{width:34px;height:34px;top:26px}
+  .ctx{grid-template-columns:1fr;gap:10px}
+  .ctx__i{display:flex;align-items:flex-start;gap:14px;padding:14px}
+  .ctx__ic{margin-bottom:0}
+  .dock{display:block}
+  body{padding-bottom:84px}
+  .close{margin-top:40px}
+}
+@supports (height:100svh){
+  @media (max-width:719px){.hero{min-height:68svh}}
+}
+
+@media (max-width:379px){
+  :root{--gut:16px}
+  .card{min-height:64px;gap:12px;padding:0 13px}
+  .card--hero{min-height:70px}
+  /* subtítulos fora nos cards que só repetem o @; o do app é o argumento */
+  .card:not(.card--hero):not(.card--app) .card__s{display:none}
+  /* o subtítulo do CTA não pode truncar: é o card mais importante */
+  .card--hero .card__s{font-size:.75rem}
+  .tile{width:36px;height:36px}
+  .card--hero .tile{width:40px;height:40px}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED-MOTION — tudo no estado final, estático
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+  .aurora i{animation:none;transform:none}
+  .hero__img{animation:none;transform:scale(1.03)}   /* Ken Burns congelado */
+  .ava__feixe,.ava__halo{animation:none}
+  .card--hero::after,.btn::after{display:none}       /* sem sweep */
+  .spot{display:none}                                /* sem spotlight */
+  .live::after{animation:none;box-shadow:0 0 0 3px rgba(53,224,192,.25)}
+  .js .rv{opacity:1;transform:none;filter:none}
+  .dock{transition:none}
+}
+
+.bio-root{color:var(--text);font-family:var(--sans);line-height:1.6;min-height:100svh;background:var(--bg);isolation:isolate}
+.bio-root .rv.in{animation:none}.card--wa .tile{background:#25d36620;color:#25d366}.card--generic .tile{color:var(--blue-3);background:#2d6bff22}.card--ig .tile{color:#e6683c}.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}.no-motion .rv{opacity:1!important;transform:none!important;filter:none!important}.bio{white-space:pre-line}.hero__mark{object-fit:contain}.card__t{overflow-wrap:anywhere}.bio-root .js .hero__img{opacity:1}
+@media(max-width:719px){.bio-root{padding-bottom:84px}body{padding-bottom:0}}
