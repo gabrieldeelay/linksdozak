@@ -643,6 +643,26 @@ a:focus-visible,button:focus-visible{
 .bio-root .card[data-title-color] .card__t,.bio-root .btn[data-title-color]{color:var(--link-title)}
 .bio-root .card[data-description-color] .card__s{color:var(--link-description)}
 .bio-root .card[data-title-color] .card__go{color:var(--link-title)}
+/* Long link labels keep breathing room instead of crowding the card edges. */
+.bio-root .card{min-height:76px;padding:15px 16px;gap:14px}
+.bio-root .card--hero{min-height:80px;padding-block:16px}
+.bio-root .card__txt{min-width:0;display:flex;flex-direction:column;gap:5px}
+.bio-root .card__t{align-items:flex-start;line-height:1.35;white-space:normal}
+.bio-root .card__label{display:block;min-width:0;flex:1;overflow-wrap:anywhere;text-wrap:pretty}
+.bio-root .card__t .live{margin-top:.43em}
+.bio-root .card .card__s{display:block;margin-top:0;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.5}
+.bio-root .card__go{margin-left:2px;align-self:center}
+.bio-root .btn{height:auto;padding:15px 20px;line-height:1.4}
+.bio-root .btn__label{min-width:0;overflow-wrap:anywhere;text-wrap:pretty;text-align:center}
+.bio-root .btn>.ic,.bio-root .btn__go{flex:none}
+@media(max-width:379px){
+ .bio-root .card{padding:14px 13px;gap:11px;min-height:74px}
+ .bio-root .card--hero{min-height:78px}
+ .bio-root .card .card__t{font-size:1rem;line-height:1.38}
+ .bio-root .card .card__s{font-size:.75rem;line-height:1.5}
+ .bio-root .tile{width:36px;height:36px}
+ .bio-root .card--hero .tile{width:40px;height:40px}
+}
 .preview-focus{outline:2px solid var(--blue-3);outline-offset:6px}
 .bio-root .card[data-link-bg]:focus-visible,.bio-root .btn[data-link-bg]:focus-visible{background:var(--link-hover-bg,var(--link-bg))}
 .bio-root .card[data-hover-bg]:focus-visible,.bio-root .btn[data-hover-bg]:focus-visible{background:var(--link-hover-bg)}
