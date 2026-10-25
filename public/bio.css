@@ -593,12 +593,12 @@ a:focus-visible,button:focus-visible{
 /* Scroll entrances share their exact behavior with the admin preview. */
 @media (prefers-reduced-motion:no-preference){
   .bio-root:not(.no-motion){
-    animation:bio-page-enter 2.5s cubic-bezier(.32,.1,.32,1) backwards;
+    animation:bio-page-enter 1.5s cubic-bezier(.32,.1,.32,1) backwards;
   }
   @keyframes bio-page-enter{
-    0%{opacity:.08;filter:blur(16px)}
-    35%{opacity:.4;filter:blur(10px)}
-    75%{opacity:.86;filter:blur(3px)}
+    0%{opacity:.35;filter:blur(6px)}
+    35%{opacity:.6;filter:blur(3px)}
+    75%{opacity:.92;filter:blur(1px)}
     100%{opacity:1;filter:none}
   }
   .bio-root.js:not(.no-motion) .hero .rv.in{
@@ -627,4 +627,10 @@ a:focus-visible,button:focus-visible{
 @media(hover:hover){
   .bio-root.js .card.in:hover{transform:translateY(-3px)}
   .bio-root.js .btn.in:hover{transform:translateY(-2px)}
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .bio-root.js:not(.no-motion) .card.scroll-rv{translate:0 46px;scale:.985;transition-duration:1.5s,2.1s,2.1s,1.5s,.2s,.2s,.2s,.2s}
+  .bio-root.js:not(.no-motion) .card.scroll-rv.in,
+  .bio-root.js:not(.no-motion) .card.scroll-rv:focus-visible{translate:0 0;scale:1}
 }

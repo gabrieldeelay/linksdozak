@@ -6,6 +6,7 @@ Bio responsiva inspirada em [linksgiobrandi.com.br](https://linksgiobrandi.com.b
 
 - Nome, arroba, biografia e selo.
 - Avatar, logotipo e capas independentes para computador e celular. Envio de PNG, JPG e WebP com otimização automática, ou endereço HTTPS.
+- Recorte visual ao enviar uma imagem ou em “Ajustar enquadramento”: arraste com mouse/toque, ajuste zoom e posição, escolha 1:1, 16:9, 4:5, 9:16 ou a proporção original. A foto de perfil usa 1:1 com guia circular. Aplicar salva uma imagem recortada sem distorção; cancelar mantém a imagem anterior. Para repetir o recorte a partir do arquivo original, envie esse arquivo novamente. URLs externas precisam permitir CORS para recorte; o painel explica quando é necessário enviar o arquivo.
 - Links: título, descrição, URL, ícone visual, destaque, atividade, rastreamento, visibilidade e exclusão com confirmação.
 - Ordem por arrastar e soltar, com suporte ao teclado e botões para mover.
 - Cores do fundo e dos destaques, animações e UTMs.
@@ -64,3 +65,5 @@ O teste HTTP também roda quando `TEST_ADMIN_PASSWORD` está definido no ambient
 As imagens, proporções e CSS públicos da referência foram usados para atender à fidelidade solicitada. Use apenas materiais que você esteja autorizado a publicar. Os ícones adicionais usam Lucide (ISC). Os efeitos incluem luzes de fundo, parallax, zoom suave na capa, aro giratório, brilho nos CTAs, entradas em cascata, indicadores de atividade e estados de hover. A preferência do sistema por movimento reduzido é respeitada.
 
 As fotos enviadas ficam incorporadas na configuração com limite total de 4 MB por salvamento. Links externos abrem em nova aba. O site mantém os destinos originais até serem alterados no painel.
+
+A entrada da página combina blur leve e fade por 1,5 segundo. Os cartões sobem suavemente durante cerca de 2,1 segundos ao entrar na tela, com pequenos atrasos em sequência. Esses efeitos acompanham a opção de animações do painel e a preferência do sistema por movimento reduzido.
