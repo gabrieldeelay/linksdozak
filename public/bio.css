@@ -273,9 +273,9 @@ a:focus-visible,button:focus-visible{
   width:40px;height:40px;
 }
 /* halo escuro primeiro: o logo é azul e agora fica em cima do fade azul.
-   O seletor longo vence o `filter:none` do .rv.in, que apagava esta sombra
+   O seletor longo vence o `filter:none` do .rv[data-revealed="true"], que apagava esta sombra
    depois da entrada. */
-.hero__mark,.js .hero__mark.rv.in{
+.hero__mark,.js .hero__mark.rv[data-revealed="true"]{
   filter:drop-shadow(0 0 10px rgba(var(--bg-rgb,5,10,23),.9)) drop-shadow(0 4px 18px rgba(var(--blue-rgb,45,107,255),.45));
 }
 .hero__content{display:flex;flex-direction:column;align-items:center;padding-bottom:4px}
@@ -448,7 +448,7 @@ a:focus-visible,button:focus-visible{
 
 /* M-03 · entrada em cascata */
 .js .rv{opacity:0;transform:translateY(16px);filter:blur(8px)}
-.js .rv.in{
+.js .rv[data-revealed="true"]{
   opacity:1;transform:none;filter:none;
   transition:opacity .62s var(--ease),transform .62s var(--ease),filter .62s var(--ease);
   transition-delay:calc(var(--d,0) * 70ms);
@@ -587,7 +587,7 @@ a:focus-visible,button:focus-visible{
 }
 
 .bio-root{color:var(--text);font-family:var(--sans);line-height:1.6;min-height:100svh;background:var(--bg);isolation:isolate}
-.bio-root .rv.in{animation:none}.card--wa .tile{background:#25d36620;color:#25d366}.card--generic .tile{color:var(--blue-3);background:rgba(var(--blue-rgb,45,107,255),.14)}.card--ig .tile{color:#e6683c}.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}.no-motion .rv{opacity:1!important;transform:none!important;filter:none!important}.bio{white-space:pre-line}.hero__mark{object-fit:contain}.card__t{overflow-wrap:anywhere}.bio-root .js .hero__img{opacity:1}
+.bio-root .rv[data-revealed="true"]{animation:none}.card--wa .tile{background:#25d36620;color:#25d366}.card--generic .tile{color:var(--blue-3);background:rgba(var(--blue-rgb,45,107,255),.14)}.card--ig .tile{color:#e6683c}.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}.no-motion .rv{opacity:1!important;transform:none!important;filter:none!important}.bio{white-space:pre-line}.hero__mark{object-fit:contain}.card__t{overflow-wrap:anywhere}.bio-root .js .hero__img{opacity:1}
 @media(max-width:719px){.bio-root{padding-bottom:84px}body{padding-bottom:0}}
 
 /* Scroll entrances share their exact behavior with the admin preview. */
@@ -601,10 +601,10 @@ a:focus-visible,button:focus-visible{
     75%{opacity:.92;filter:blur(1px)}
     100%{opacity:1;filter:none}
   }
-  .bio-root.js:not(.no-motion) .hero .rv.in{
+  .bio-root.js:not(.no-motion) .hero .rv[data-revealed="true"]{
     transition-duration:1.4s;
   }
-  .bio-root.js:not(.no-motion) .scroll-rv{
+  .bio-root.js:not(.no-motion) .rv[data-scroll-reveal]{
     opacity:0;translate:0 30px;scale:.975;filter:blur(5px);transform:none;
     transition:
       opacity 1.35s cubic-bezier(.22,.55,.3,1) var(--scroll-delay,0ms),
@@ -614,25 +614,25 @@ a:focus-visible,button:focus-visible{
       transform .2s ease-out,background-color .2s ease-out,
       border-color .2s ease-out,box-shadow .2s ease-out;
   }
-  .bio-root.js:not(.no-motion) .scroll-rv.in,
-  .bio-root.js:not(.no-motion) .scroll-rv:focus-visible{
+  .bio-root.js:not(.no-motion) .rv[data-scroll-reveal][data-revealed="true"],
+  .bio-root.js:not(.no-motion) .rv[data-scroll-reveal]:focus-visible{
     opacity:1;translate:0 0;scale:1;filter:none;
   }
   @media(max-width:719px){
-    .bio-root.js:not(.no-motion) .scroll-rv{translate:0 24px;filter:blur(2px)}
-    .bio-root.js:not(.no-motion) .scroll-rv.in,
-    .bio-root.js:not(.no-motion) .scroll-rv:focus-visible{translate:0 0;filter:none}
+    .bio-root.js:not(.no-motion) .rv[data-scroll-reveal]{translate:0 24px;filter:blur(2px)}
+    .bio-root.js:not(.no-motion) .rv[data-scroll-reveal][data-revealed="true"],
+    .bio-root.js:not(.no-motion) .rv[data-scroll-reveal]:focus-visible{translate:0 0;filter:none}
   }
 }
 @media(hover:hover){
-  .bio-root.js .card.in:hover{transform:translateY(-3px)}
-  .bio-root.js .btn.in:hover{transform:translateY(-2px)}
+  .bio-root.js .card[data-revealed="true"]:hover{transform:translateY(-3px)}
+  .bio-root.js .btn[data-revealed="true"]:hover{transform:translateY(-2px)}
 }
 
 @media(prefers-reduced-motion:no-preference){
-  .bio-root.js:not(.no-motion) .card.scroll-rv{translate:0 46px;scale:.985;transition-duration:1.5s,2.1s,2.1s,1.5s,.2s,.2s,.2s,.2s}
-  .bio-root.js:not(.no-motion) .card.scroll-rv.in,
-  .bio-root.js:not(.no-motion) .card.scroll-rv:focus-visible{translate:0 0;scale:1}
+  .bio-root.js:not(.no-motion) .card.rv[data-scroll-reveal]{translate:0 46px;scale:.985;transition-duration:1.5s,2.1s,2.1s,1.5s,.2s,.2s,.2s,.2s}
+  .bio-root.js:not(.no-motion) .card.rv[data-scroll-reveal][data-revealed="true"],
+  .bio-root.js:not(.no-motion) .card.rv[data-scroll-reveal]:focus-visible{translate:0 0;scale:1}
 }
 
 /* Per-link color overrides apply to both public and admin preview. */
@@ -664,6 +664,9 @@ a:focus-visible,button:focus-visible{
  .bio-root .card--hero .tile{width:40px;height:40px}
 }
 .preview-focus{outline:2px solid var(--blue-3);outline-offset:6px}
+/* The fade stays fixed while the photo moves, avoiding a seam below the hero. */
+.hero__visual{position:absolute;inset:0;z-index:-2;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 54%,transparent 94%);mask-image:linear-gradient(180deg,#000 0%,#000 54%,transparent 94%)}
+.hero__visual .hero__media{z-index:auto;-webkit-mask-image:none;mask-image:none}
 /* Activity belongs to the label, rather than the right-hand arrow. */
 .bio-root .card__t{display:block}
 .bio-root .card__label{display:inline;min-width:0}

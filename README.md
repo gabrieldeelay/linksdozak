@@ -17,6 +17,7 @@ Bio responsiva inspirada em [linksgiobrandi.com.br](https://linksgiobrandi.com.b
 - Blocos de contexto, seus títulos, textos e ícones; chamada final; botão fixo no celular; direitos autorais e rodapé.
 - Prévia em iframe que executa o mesmo componente e CSS do site público, em tamanhos de celular e computador. As alterações aparecem antes do salvamento.
 - Prévia ampliável, com viewport de 390 px ou 1280 px, ajuste de zoom, navegação até topo/links, repetição da entrada e foco no link em edição. Ampliar usa a mesma prévia e preserva sua posição.
+- Os viewports têm alturas fixas de 844 px (celular) e 900 px (computador); zoom altera a escala, preservando o recorte da capa e os espaçamentos. A prévia aguarda a configuração real e confirma a quantidade de links ativos após renderizar. Os marcadores de animação são independentes das classes dos cartões, evitando sumiços ao trocar ícone ou destaque.
 
 Salvamento automático após 800 ms de pausa, requisições serializadas e controle de versão impedem sobrescrever alterações de outra sessão. Erros são apresentados no painel e permitem baixar um backup das alterações não salvas. O site público acompanha os salvamentos em outras abas e consulta alterações a cada 10 segundos.
 
