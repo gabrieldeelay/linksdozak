@@ -20,7 +20,7 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  const io=new IntersectionObserver(entries=>{
    const entering=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
    let scrollIndex=0;
-   entering.forEach(entry=>{const el=entry.target as HTMLElement;if(el.classList.contains('scroll-rv'))el.style.setProperty('--scroll-delay',`${Math.min(scrollIndex++,4)*65}ms`);el.classList.add('in');});
+   entering.forEach(entry=>{const el=entry.target as HTMLElement;if(el.classList.contains('scroll-rv'))el.style.setProperty('--scroll-delay',`${Math.min(scrollIndex++,4)*110}ms`);el.classList.add('in');});
    for(const entry of entries){
      // Replay when an element comes back into view, without hiding cards that
      // are still partly visible at the viewport boundary.

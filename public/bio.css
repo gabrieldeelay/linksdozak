@@ -592,13 +592,25 @@ a:focus-visible,button:focus-visible{
 
 /* Scroll entrances share their exact behavior with the admin preview. */
 @media (prefers-reduced-motion:no-preference){
+  .bio-root:not(.no-motion){
+    animation:bio-page-enter 2.5s cubic-bezier(.32,.1,.32,1) backwards;
+  }
+  @keyframes bio-page-enter{
+    0%{opacity:.08;filter:blur(16px)}
+    35%{opacity:.4;filter:blur(10px)}
+    75%{opacity:.86;filter:blur(3px)}
+    100%{opacity:1;filter:none}
+  }
+  .bio-root.js:not(.no-motion) .hero .rv.in{
+    transition-duration:1.4s;
+  }
   .bio-root.js:not(.no-motion) .scroll-rv{
     opacity:0;translate:0 30px;scale:.975;filter:blur(5px);transform:none;
     transition:
-      opacity .72s var(--ease) var(--scroll-delay,0ms),
-      translate .88s var(--ease) var(--scroll-delay,0ms),
-      scale .88s var(--ease) var(--scroll-delay,0ms),
-      filter .72s var(--ease) var(--scroll-delay,0ms),
+      opacity 1.35s cubic-bezier(.22,.55,.3,1) var(--scroll-delay,0ms),
+      translate 1.6s cubic-bezier(.22,.55,.3,1) var(--scroll-delay,0ms),
+      scale 1.6s cubic-bezier(.22,.55,.3,1) var(--scroll-delay,0ms),
+      filter 1.35s cubic-bezier(.22,.55,.3,1) var(--scroll-delay,0ms),
       transform .2s ease-out,background-color .2s ease-out,
       border-color .2s ease-out,box-shadow .2s ease-out;
   }
