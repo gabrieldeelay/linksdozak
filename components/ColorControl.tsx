@@ -1,10 +1,17 @@
 'use client';
-import { useState,useEffect } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { useState,useRef,useEffect,useId } from 'react';
+import { ArrowLeft,Check,RotateCcw } from 'lucide-react';
+const palette=['#FFFFFF','#C4CDDD','#64748B','#111827','#050A17','#2D6BFF','#38BDF8','#14B8A6','#00C28B','#84CC16','#FACC15','#FFAA33','#F97316','#EF4444','#EC4899','#A855F7'];
 export default function ColorControl({label,value,fallback,onChange,alpha=false}:{label:string;value?:string;fallback:string;onChange:(value:string|undefined)=>void;alpha?:boolean}){
- const color=value||fallback,[draft,setDraft]=useState(color);
- useEffect(()=>setDraft(color),[color]);
- const opacity=color.length===9?parseInt(color.slice(7),16):255;
- function choose(hex:string){onChange(hex+(alpha&&opacity<255?opacity.toString(16).padStart(2,'0'):''));}
- return <div className="custom-color"><div className="custom-color-main"><span>{label}<small>{value?'Personalizada':'Automática'}</small></span><label className="color-swatch" style={{background:color}}><input type="color" aria-label={label} value={color.slice(0,7)} onChange={e=>choose(e.target.value)}/></label><input className="color-hex" aria-label={`Código de ${label}`} value={draft} maxLength={alpha?9:7} onChange={e=>{const s=e.target.value;setDraft(s);if((alpha?/^#[0-9a-f]{6}([0-9a-f]{2})?$/i:/^#[0-9a-f]{6}$/i).test(s))onChange(s);}} onBlur={()=>setDraft(color)}/><button className="icon-button" title="Restaurar cor automática" aria-label={`Restaurar ${label}`} disabled={!value} onClick={()=>onChange(undefined)}><RotateCcw size={13}/></button></div>{alpha&&<label className="color-opacity"><span>Opacidade</span><input type="range" aria-label={`Opacidade de ${label}`} min="0" max="100" value={Math.round(opacity/255*100)} onChange={e=>onChange(color.slice(0,7)+Math.round(Number(e.target.value)/100*255).toString(16).padStart(2,'0'))}/><output>{Math.round(opacity/255*100)}%</output></label>}</div>;
+ const color=value||fallback,dialog=useRef<HTMLDialogElement>(null),id=useId();
+ const [open,setOpen]=useState(false),[draft,setDraft]=useState(color.slice(0,7)),[opacity,setOpacity]=useState(100);
+ useEffect(()=>{if(open)dialog.current?.showModal();},[open]);
+ function close(){dialog.current?.close();setOpen(false);}
+ function begin(){setDraft(color.slice(0,7));setOpacity(color.length===9?Math.round(parseInt(color.slice(7),16)/255*100):100);setOpen(true);}
+ function choose(hex:string){setDraft(hex);setOpacity(100);}
+ const valid=/^#[0-9a-f]{6}$/i.test(draft),result=valid?draft+(alpha&&opacity<100?Math.round(opacity/100*255).toString(16).padStart(2,'0'):''):color;
+ return <div className="simple-color-row"><span>{label}<small>{value?'Cor personalizada':'Acompanha o tema'}</small></span><button className="color-open-button" onClick={begin} aria-label={`Escolher ${label}`}><i style={{background:color}}/><span>Escolher cor</span></button>
+ {open&&<dialog className="color-dialog" ref={dialog} aria-labelledby={`${id}-title`} onCancel={e=>{e.preventDefault();close();}}><header><button className="dialog-back" onClick={close}><ArrowLeft size={18}/>Voltar</button><h2 id={`${id}-title`}>{label}</h2></header><p>Escolha uma cor. Nada será alterado ao cancelar.</p><div className="color-compare"><div><small>Atual</small><span style={{background:color}}/></div><div><small>Nova cor</small><span style={{background:result}}/></div></div><div className="color-palette">{palette.map(hex=><button key={hex} style={{background:hex}} aria-label={`Cor ${hex}`} aria-pressed={draft.toUpperCase()===hex} onClick={()=>choose(hex)}>{draft.toUpperCase()===hex&&<Check size={20} color={['#FFFFFF','#C4CDDD','#38BDF8','#FACC15','#FFAA33','#84CC16'].includes(hex)?'#06101d':'white'}/>}</button>)}</div><div className="color-custom-pick"><label><span>Cor personalizada</span><input type="color" value={valid?draft:'#2d6bff'} onChange={e=>choose(e.target.value)}/></label><label><span>Código da cor</span><input value={draft} maxLength={7} onChange={e=>setDraft(e.target.value)} aria-invalid={!valid}/></label></div>{alpha&&<label className="color-dialog-opacity"><span>Intensidade da cor <output>{opacity}%</output></span><input type="range" min="0" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/><small>100% = cor sólida · 0% = transparente</small></label>}
+ <button className="restore-color" onClick={()=>{onChange(undefined);close();}}><RotateCcw size={16}/>Usar cor automática do tema</button><footer><button className="cancel-button" onClick={close}>Cancelar</button><button className="primary" disabled={!valid} onClick={()=>{onChange(result);close();}}><Check size={17}/>Usar esta cor</button></footer></dialog>}
+ </div>;
 }

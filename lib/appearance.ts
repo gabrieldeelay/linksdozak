@@ -15,6 +15,7 @@ export function themeVariables(t:BioConfig['theme']):Record<string,string>{
  '--bg':t.background,'--bg-rgb':rgb(t.background),'--bg-2':t.surface||(original?'#08122A':`color-mix(in srgb, ${t.accent} 9%, ${t.background})`),
  '--blue':t.accent,'--blue-rgb':rgb(t.accent),'--blue-2':original?'#4D8DFF':t.accent,'--blue-2-rgb':rgb(original?'#4D8DFF':t.accent),
  '--blue-3':original?'#8DB8FF':`color-mix(in srgb, ${t.accent} 50%, white)`,
+ '--line-p':`rgba(${rgb(t.accent)},.45)`,'--glow-p':`0 8px 32px rgba(${rgb(t.accent)},.18)`,'--glow-cta':`0 12px 40px rgba(${rgb(t.accent)},.35)`,
  '--cta-rgb':rgb(original?'#1C4FE6':t.accent),'--beam':original?'#4D8DFF':t.accent,
  '--grad-cta':original?'linear-gradient(135deg,#1C4FE6 0%,#2A66FF 100%)':`linear-gradient(135deg,color-mix(in srgb,${t.accent} 80%,black),${t.accent})`,
  '--glow-color':t.glow||t.accent,'--cyan':t.secondaryGlow||(original?'#1AA6F0':t.accent),
@@ -35,5 +36,7 @@ export function linkAttributes(l:BioLink){const c=l.colors||{};return {'data-lin
 export function linkColorFallback(l:BioLink,key:keyof LinkColors,theme:BioConfig['theme']):string{
  const iconColors:Record<string,string>={telegram:'#29A9EA',instagram:'#E6683C',youtube:'#FF0033',app:'#00DC99',whatsapp:'#25D366'};
  const colors:Record<keyof LinkColors,string>={background:l.featured?theme.accent:'#0E1421',backgroundEnd:theme.accent,iconBackground:l.featured?'#FFFFFF29':(iconColors[l.icon]||theme.accent)+'24',iconColor:l.featured?'#FFFFFF':iconColors[l.icon]||theme.accent,title:'#FFFFFF',description:l.featured?'#FFFFFF':'#8590A8',border:l.featured?'#FFFFFF24':l.icon==='app'?'#00DC994D':'#FFFFFF14',hoverBackground:l.featured?theme.accent:'#141925',hoverBorder:theme.accent};
+ if(key==='hoverBackground'&&!l.colors?.hoverBackground&&l.colors?.background)return l.colors.background;
+ if(key==='hoverBorder'&&!l.colors?.hoverBorder&&l.colors?.border)return l.colors.border;
  return l.colors?.[key]||colors[key];
 }

@@ -12,6 +12,8 @@ Bio responsiva inspirada em [linksgiobrandi.com.br](https://linksgiobrandi.com.b
 - Cores do fundo e dos destaques, animações e UTMs.
 - Temas completos azul, roxo, verde, dourado, rosa e vermelho; cores personalizadas para o fundo base, luz principal, luz secundária, intensidade das luzes, superfícies e textos. O degradê da capa, aro luminoso, brilho, bordas e botões acompanham o tema.
 - Cores individuais dos links: fundo do ícone, símbolo, botão/degradê, título, descrição, borda e estados ao passar o mouse. Os fundos e bordas aceitam opacidade e todas as cores podem voltar ao modo automático.
+- Edição de cores em duas etapas: a janela de seleção oferece paleta, cor personalizada, comparação antes/depois, voltar e cancelar. A seção mantém um rascunho para testar na prévia; somente “Aplicar cores” ou “Aplicar tema” altera a configuração persistida. Também há restauração e opção de desfazer a última aplicação enquanto a seção estiver aberta. As demais edições continuam com salvamento automático.
+- Painel escuro com textos maiores e contraste reforçado, incluindo formulários, navegação, recorte e prévia.
 - Blocos de contexto, seus títulos, textos e ícones; chamada final; botão fixo no celular; direitos autorais e rodapé.
 - Prévia em iframe que executa o mesmo componente e CSS do site público, em tamanhos de celular e computador. As alterações aparecem antes do salvamento.
 - Prévia ampliável, com viewport de 390 px ou 1280 px, ajuste de zoom, navegação até topo/links, repetição da entrada e foco no link em edição. Ampliar usa a mesma prévia e preserva sua posição.
