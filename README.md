@@ -10,8 +10,11 @@ Bio responsiva inspirada em [linksgiobrandi.com.br](https://linksgiobrandi.com.b
 - Links: título, descrição, URL, ícone visual, destaque, atividade, rastreamento, visibilidade e exclusão com confirmação.
 - Ordem por arrastar e soltar, com suporte ao teclado e botões para mover.
 - Cores do fundo e dos destaques, animações e UTMs.
+- Temas completos azul, roxo, verde, dourado, rosa e vermelho; cores personalizadas para o fundo base, luz principal, luz secundária, intensidade das luzes, superfícies e textos. O degradê da capa, aro luminoso, brilho, bordas e botões acompanham o tema.
+- Cores individuais dos links: fundo do ícone, símbolo, botão/degradê, título, descrição, borda e estados ao passar o mouse. Os fundos e bordas aceitam opacidade e todas as cores podem voltar ao modo automático.
 - Blocos de contexto, seus títulos, textos e ícones; chamada final; botão fixo no celular; direitos autorais e rodapé.
 - Prévia em iframe que executa o mesmo componente e CSS do site público, em tamanhos de celular e computador. As alterações aparecem antes do salvamento.
+- Prévia ampliável, com viewport de 390 px ou 1280 px, ajuste de zoom, navegação até topo/links, repetição da entrada e foco no link em edição. Ampliar usa a mesma prévia e preserva sua posição.
 
 Salvamento automático após 800 ms de pausa, requisições serializadas e controle de versão impedem sobrescrever alterações de outra sessão. Erros são apresentados no painel e permitem baixar um backup das alterações não salvas. O site público acompanha os salvamentos em outras abas e consulta alterações a cada 10 segundos.
 

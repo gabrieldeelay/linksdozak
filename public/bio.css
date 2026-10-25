@@ -23,7 +23,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
                              de borda em gradiente exige camada de cima OPACA,
                              senão o gradiente vaza para dentro do card */
   --line:      rgba(255,255,255,.08);
-  --line-p:    rgba(45,107,255,.45);
+  --line-p:    rgba(var(--blue-rgb,45,107,255),.45);
 
   /* marca — azul desde 02/10/2026 (antes roxo #6E3BFF) */
   --blue:      #2D6BFF;   /* preenchimentos, bordas, glows — NUNCA texto pequeno */
@@ -50,9 +50,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
                              em hover — passa em AA nos rótulos mono de 11px */
 
   /* efeitos */
-  --glow-p:    0 8px 32px rgba(45,107,255,.18);
-  --glow-cta:  0 12px 40px rgba(45,107,255,.35);
-  --glow-rad:  radial-gradient(circle, rgba(45,107,255,.25) 0%, rgba(0,0,0,0) 70%);
+  --glow-p:    0 8px 32px rgba(var(--blue-rgb,45,107,255),.18);
+  --glow-cta:  0 12px 40px rgba(var(--blue-rgb,45,107,255),.35);
+  --glow-rad:  radial-gradient(circle, rgba(var(--blue-rgb,45,107,255),.25) 0%, rgba(0,0,0,0) 70%);
 
   /* tipografia */
   --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -104,8 +104,8 @@ a:focus-visible,button:focus-visible{
 .badge{
   display:inline-flex;align-items:center;gap:7px;
   padding:6px 12px;border-radius:999px;
-  background:rgba(45,107,255,.14);
-  border:1px solid rgba(45,107,255,.35);
+  background:rgba(var(--blue-rgb,45,107,255),.14);
+  border:1px solid rgba(var(--blue-rgb,45,107,255),.35);
   color:var(--blue-3);
   font-family:var(--mono);font-weight:500;
   font-size:var(--label);text-transform:uppercase;letter-spacing:.14em;
@@ -250,15 +250,15 @@ a:focus-visible,button:focus-visible{
   position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
     linear-gradient(180deg,                /* fade azul de cima */
-      rgba(28,79,230,.78) 0%,
-      rgba(28,79,230,.46) 14%,
-      rgba(28,79,230,.16) 30%,
-      rgba(28,79,230,0) 46%),
+      rgba(var(--cta-rgb,28,79,230),.78) 0%,
+      rgba(var(--cta-rgb,28,79,230),.46) 14%,
+      rgba(var(--cta-rgb,28,79,230),.16) 30%,
+      rgba(var(--cta-rgb,28,79,230),0) 46%),
     linear-gradient(180deg,
     rgba(0,0,0,.35) 0%,
     rgba(0,0,0,.55) 46%,
-    rgba(5,10,23,.88) 78%,
-    rgba(5,10,23,0) 100%);
+    rgba(var(--bg-rgb,5,10,23),.88) 78%,
+    rgba(var(--bg-rgb,5,10,23),0) 100%);
 }
 .hero__glow{
   position:absolute;left:50%;top:58%;z-index:-1;
@@ -276,7 +276,7 @@ a:focus-visible,button:focus-visible{
    O seletor longo vence o `filter:none` do .rv.in, que apagava esta sombra
    depois da entrada. */
 .hero__mark,.js .hero__mark.rv.in{
-  filter:drop-shadow(0 0 10px rgba(5,10,23,.9)) drop-shadow(0 4px 18px rgba(45,107,255,.45));
+  filter:drop-shadow(0 0 10px rgba(var(--bg-rgb,5,10,23),.9)) drop-shadow(0 4px 18px rgba(var(--blue-rgb,45,107,255),.45));
 }
 .hero__content{display:flex;flex-direction:column;align-items:center;padding-bottom:4px}
 
@@ -287,7 +287,7 @@ a:focus-visible,button:focus-visible{
 .ava{position:relative;width:112px;height:112px;margin-bottom:22px}
 .ava::before{                       /* trilho: aro fino e estático */
   content:'';position:absolute;inset:-6px;border-radius:999px;
-  background:rgba(45,107,255,.24);     /* apagado: quem brilha é o feixe */
+  background:rgba(var(--blue-rgb,45,107,255),.24);     /* apagado: quem brilha é o feixe */
   -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));
           mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));
 }
@@ -298,9 +298,9 @@ a:focus-visible,button:focus-visible{
 .ava__feixe,.ava__halo{
   position:absolute;border-radius:999px;pointer-events:none;
   background:conic-gradient(from 0deg,
-    rgba(77,141,255,0) 0deg, rgba(77,141,255,0) 200deg,
-    rgba(77,141,255,.55) 300deg, var(--beam) 340deg, #EAF2FF 358deg,
-    rgba(77,141,255,0) 360deg);
+    rgba(var(--blue-2-rgb,77,141,255),0) 0deg, rgba(var(--blue-2-rgb,77,141,255),0) 200deg,
+    rgba(var(--blue-2-rgb,77,141,255),.55) 300deg, var(--beam) 340deg, #EAF2FF 358deg,
+    rgba(var(--blue-2-rgb,77,141,255),0) 360deg);
   animation:spin 3.2s linear infinite;
 }
 .ava__feixe{
@@ -346,7 +346,7 @@ a:focus-visible,button:focus-visible{
   left:50%;top:0;bottom:var(--spine-end,96px);width:1px;
   transform:translateX(-.5px);
   background:repeating-linear-gradient(180deg,
-    rgba(141,184,255,.34) 0 5px, transparent 5px 15px);
+    rgba(var(--blue-rgb,141,184,255),.34) 0 5px, transparent 5px 15px);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 7%,#000 90%,transparent);
           mask-image:linear-gradient(180deg,transparent,#000 7%,#000 90%,transparent);
   pointer-events:none;
@@ -375,7 +375,7 @@ a:focus-visible,button:focus-visible{
 .ctx__ic{
   width:34px;height:34px;margin-bottom:12px;border-radius:10px;
   display:grid;place-items:center;
-  background:rgba(45,107,255,.16);color:var(--blue-3);
+  background:rgba(var(--blue-rgb,45,107,255),.16);color:var(--blue-3);
 }
 .ctx__ic .ic{width:17px;height:17px}
 .ctx__t{
@@ -407,7 +407,7 @@ a:focus-visible,button:focus-visible{
   position:fixed;left:0;right:0;bottom:0;z-index:40;
   display:none;
   padding:12px var(--gut) calc(12px + env(safe-area-inset-bottom));
-  background:rgba(5,10,23,.88);
+  background:rgba(var(--bg-rgb,5,10,23),.88);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   border-top:1px solid var(--line);
   transform:translateY(100%);
@@ -426,10 +426,10 @@ a:focus-visible,button:focus-visible{
 /* M-01 · aurora drift — duas manchas dessincronizadas no fundo */
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .aurora i{position:absolute;display:block;border-radius:999px;
-  filter:blur(80px);opacity:.35;will-change:transform}
+  filter:blur(80px);opacity:var(--aurora-opacity,.35);will-change:transform}
 .aurora i:nth-child(1){
   width:600px;height:600px;left:-16%;top:22%;
-  background:radial-gradient(circle,var(--blue) 0%,rgba(45,107,255,0) 68%);
+  background:radial-gradient(circle,var(--glow-color,var(--blue)) 0%,rgba(var(--blue-rgb,45,107,255),0) 68%);
   animation:au1 28s ease-in-out infinite alternate;
 }
 .aurora i:nth-child(2){
@@ -478,14 +478,14 @@ a:focus-visible,button:focus-visible{
     border-color:rgba(0,220,153,.58);box-shadow:0 8px 32px rgba(0,220,153,.14);
   }
   .card--app:not(.card--hero):hover .card__go{color:#5CF2C4}
-  .card--hero:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
+  .card--hero:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(var(--blue-rgb,45,107,255),.44)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(var(--blue-rgb,45,107,255),.44)}
   .btn:hover .btn__go{transform:translateX(4px)}
 }
 /* teclado recebe o mesmo estado do mouse */
 .card:not(.card--hero):focus-visible{transform:translateY(-3px);background:var(--card-h);box-shadow:var(--glow-p)}
 .card--app:not(.card--hero):focus-visible{box-shadow:0 8px 32px rgba(0,220,153,.14)}
-.card--hero:focus-visible{transform:translateY(-3px);box-shadow:0 16px 48px rgba(45,107,255,.44)}
+.card--hero:focus-visible{transform:translateY(-3px);box-shadow:0 16px 48px rgba(var(--blue-rgb,45,107,255),.44)}
 /* toque: mesmo estado, mais rápido */
 .card:active,.btn:active{transform:translateY(-3px);transition-duration:.12s}
 .btn:active{transform:translateY(-1px) scale(.995)}
@@ -513,7 +513,7 @@ a:focus-visible,button:focus-visible{
   position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;
   transition:opacity .3s ease-out;
   background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),
-    rgba(45,107,255,.12) 0%, rgba(45,107,255,0) 70%);
+    rgba(var(--blue-rgb,45,107,255),.12) 0%, rgba(var(--blue-rgb,45,107,255),0) 70%);
 }
 .spot.is-on{opacity:1}
 
@@ -587,7 +587,7 @@ a:focus-visible,button:focus-visible{
 }
 
 .bio-root{color:var(--text);font-family:var(--sans);line-height:1.6;min-height:100svh;background:var(--bg);isolation:isolate}
-.bio-root .rv.in{animation:none}.card--wa .tile{background:#25d36620;color:#25d366}.card--generic .tile{color:var(--blue-3);background:#2d6bff22}.card--ig .tile{color:#e6683c}.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}.no-motion .rv{opacity:1!important;transform:none!important;filter:none!important}.bio{white-space:pre-line}.hero__mark{object-fit:contain}.card__t{overflow-wrap:anywhere}.bio-root .js .hero__img{opacity:1}
+.bio-root .rv.in{animation:none}.card--wa .tile{background:#25d36620;color:#25d366}.card--generic .tile{color:var(--blue-3);background:rgba(var(--blue-rgb,45,107,255),.14)}.card--ig .tile{color:#e6683c}.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}.no-motion .rv{opacity:1!important;transform:none!important;filter:none!important}.bio{white-space:pre-line}.hero__mark{object-fit:contain}.card__t{overflow-wrap:anywhere}.bio-root .js .hero__img{opacity:1}
 @media(max-width:719px){.bio-root{padding-bottom:84px}body{padding-bottom:0}}
 
 /* Scroll entrances share their exact behavior with the admin preview. */
@@ -633,4 +633,24 @@ a:focus-visible,button:focus-visible{
   .bio-root.js:not(.no-motion) .card.scroll-rv{translate:0 46px;scale:.985;transition-duration:1.5s,2.1s,2.1s,1.5s,.2s,.2s,.2s,.2s}
   .bio-root.js:not(.no-motion) .card.scroll-rv.in,
   .bio-root.js:not(.no-motion) .card.scroll-rv:focus-visible{translate:0 0;scale:1}
+}
+
+/* Per-link color overrides apply to both public and admin preview. */
+.bio-root .card[data-link-bg],.bio-root .btn[data-link-bg]{background:var(--link-bg)}
+.bio-root .card[data-link-border],.bio-root .btn[data-link-border]{border-color:var(--link-border)}
+.bio-root .card[data-icon-bg] .tile{background:var(--link-icon-bg)}
+.bio-root .card[data-icon-color] .tile{color:var(--link-icon-color)}
+.bio-root .card[data-title-color] .card__t,.bio-root .btn[data-title-color]{color:var(--link-title)}
+.bio-root .card[data-description-color] .card__s{color:var(--link-description)}
+.bio-root .card[data-title-color] .card__go{color:var(--link-title)}
+.preview-focus{outline:2px solid var(--blue-3);outline-offset:6px}
+.bio-root .card[data-link-bg]:focus-visible,.bio-root .btn[data-link-bg]:focus-visible{background:var(--link-hover-bg,var(--link-bg))}
+.bio-root .card[data-hover-bg]:focus-visible,.bio-root .btn[data-hover-bg]:focus-visible{background:var(--link-hover-bg)}
+.bio-root .card[data-link-border]:focus-visible,.bio-root .btn[data-link-border]:focus-visible{border-color:var(--link-hover-border,var(--link-border))}
+.bio-root .card[data-hover-border]:focus-visible,.bio-root .btn[data-hover-border]:focus-visible{border-color:var(--link-hover-border)}
+@media(hover:hover){
+.bio-root .card[data-link-bg]:hover,.bio-root .btn[data-link-bg]:hover{background:var(--link-hover-bg,var(--link-bg))}
+.bio-root .card[data-hover-bg]:hover,.bio-root .btn[data-hover-bg]:hover{background:var(--link-hover-bg)}
+.bio-root .card[data-link-border]:hover,.bio-root .btn[data-link-border]:hover{border-color:var(--link-hover-border,var(--link-border))}
+.bio-root .card[data-hover-border]:hover,.bio-root .btn[data-hover-border]:hover{border-color:var(--link-hover-border)}
 }
