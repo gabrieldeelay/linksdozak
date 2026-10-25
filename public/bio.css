@@ -636,6 +636,7 @@ a:focus-visible,button:focus-visible{
 }
 
 /* Per-link color overrides apply to both public and admin preview. */
+.bio-root .card .tile{background:var(--link-auto-icon-bg);color:var(--link-auto-icon-color)}
 .bio-root .card[data-link-bg],.bio-root .btn[data-link-bg]{background:var(--link-bg)}
 .bio-root .card[data-link-border],.bio-root .btn[data-link-border]{border-color:var(--link-border)}
 .bio-root .card[data-icon-bg] .tile{background:var(--link-icon-bg)}
