@@ -16,10 +16,26 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  useEffect(()=>{document.title=`${c.profile.name} — Links`;document.body.style.background=c.theme.background;return()=>{document.body.style.background='';};},[c.profile.name,c.theme.background]);
  useEffect(()=>{
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches||!c.theme.motion;
- const io=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}},{threshold:.1});root.current?.querySelectorAll('.rv').forEach(el=>io.observe(el));
+ const seen=new WeakSet<Element>();
+ const io=new IntersectionObserver(entries=>{
+   const entering=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+   let scrollIndex=0;
+   entering.forEach(entry=>{const el=entry.target as HTMLElement;if(el.classList.contains('scroll-rv'))el.style.setProperty('--scroll-delay',`${Math.min(scrollIndex++,4)*65}ms`);el.classList.add('in');});
+   for(const entry of entries){
+     // Replay when an element comes back into view, without hiding cards that
+     // are still partly visible at the viewport boundary.
+     if(!entry.isIntersecting&&(entry.boundingClientRect.bottom<=0||entry.boundingClientRect.top>=innerHeight))entry.target.classList.remove('in');
+   }
+ },{threshold:.12,rootMargin:'0px 0px -4% 0px'});
+ const observe=(node:Element)=>{const elements=[...(node.matches('.rv')?[node]:[]),...node.querySelectorAll('.rv')];for(const el of elements){if(seen.has(el))continue;seen.add(el);if(el.closest('main')||el.matches('footer'))el.classList.add('scroll-rv');io.observe(el);}};
+ if(root.current)observe(root.current);
+ // Newly enabled links and added sections must animate in the live preview,
+ // too; an observer tied only to the link count misses those insertions.
+ const additions=new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node instanceof Element)observe(node);});
+ if(root.current)additions.observe(root.current,{childList:true,subtree:true});
  let raf=0;const update=()=>{raf=0;const h=hero.current?.getBoundingClientRect();const e=end.current?.getBoundingClientRect();setSticky(!!h&&h.bottom<0&&(!e||e.top>innerHeight||e.bottom<0));if(media.current&&!reduced&&scrollY<(hero.current?.offsetHeight||0)+40)media.current.style.transform=`translate3d(0,${scrollY*.25}px,0)`;};
  const scroll=()=>{if(!raf)raf=requestAnimationFrame(update);};const mouse=(e:MouseEvent)=>{if(!spot.current||reduced)return;spot.current.style.setProperty('--mx',`${e.clientX}px`);spot.current.style.setProperty('--my',`${e.clientY}px`);spot.current.classList.add('is-on');};
- addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});if(matchMedia('(hover:hover) and (pointer:fine)').matches)addEventListener('mousemove',mouse,{passive:true});update();return()=>{io.disconnect();cancelAnimationFrame(raf);removeEventListener('scroll',scroll);removeEventListener('resize',scroll);removeEventListener('mousemove',mouse);};
+ addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});if(matchMedia('(hover:hover) and (pointer:fine)').matches)addEventListener('mousemove',mouse,{passive:true});update();return()=>{io.disconnect();additions.disconnect();cancelAnimationFrame(raf);removeEventListener('scroll',scroll);removeEventListener('resize',scroll);removeEventListener('mousemove',mouse);};
  },[c.theme.motion,c.links.length]);
  async function copy(){try{await navigator.clipboard.writeText(c.profile.handle);setCopied(true);setTimeout(()=>setCopied(false),1500);}catch{setCopied(false);}}
  const active=c.links.filter(l=>l.enabled);const closing=active.find(l=>l.id===c.closing.linkId);
@@ -36,7 +52,7 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  <main className="wrap stack"><section className="links" aria-label={`Canais de ${c.profile.name}`}>{active.map(card)}</section>
  {c.context.enabled&&<section className="ctx" aria-label="O que você encontra">{c.context.items.map((item,i)=><div key={i} className="ctx__i rv" style={{'--d':i} as CSSProperties}><span className="ctx__ic"><Icon name={item.icon}/></span><div><h2 className="ctx__t">{item.title}</h2><p className="ctx__p">{item.description}</p></div></div>)}</section>}
  {c.closing.enabled&&closing&&<section className="close" ref={end}><h2 className="close__h rv">{c.closing.title}</h2><a className="btn close__b rv" href={destination(closing,c.theme.passUtm,search)} target="_blank" rel="noopener noreferrer" onClick={e=>{if(preview)e.preventDefault();}}><Icon name={closing.icon}/>{closing.title}<span className="btn__go"><Icon name="arrow"/></span></a></section>}</main>
- <footer className="foot wrap"><div className="foot__id"><img src={c.profile.logo} width="22" height="22" alt=""/><span>{c.profile.name}</span></div><p className="foot__c">{c.footer.copyright}</p><p className="foot__r">{c.footer.disclaimer}</p></footer>
+ <footer className="foot wrap rv"><div className="foot__id"><img src={c.profile.logo} width="22" height="22" alt=""/><span>{c.profile.name}</span></div><p className="foot__c">{c.footer.copyright}</p><p className="foot__r">{c.footer.disclaimer}</p></footer>
  {c.closing.sticky&&closing&&<div className={`dock ${sticky?'is-on':''}`} inert={!sticky}><a className="btn" href={destination(closing,c.theme.passUtm,search)} target="_blank" rel="noopener noreferrer" onClick={e=>{if(preview)e.preventDefault();}}>{closing.title}<span className="btn__go"><Icon name="arrow"/></span></a></div>}
  </div>;
 }
