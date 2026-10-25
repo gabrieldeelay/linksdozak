@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Window,type HTMLButtonElement,type HTMLElement,type HTMLInputElement } from 'happy-dom';
 import { createElement,act } from 'react';
-import { defaultConfig,type BioLink } from '../lib/config';
+import { defaultConfig,type BioLink,type BioConfig } from '../lib/config';
 import type { LinkColors } from '../lib/appearance';
 
 test('restaurar uma cor atualiza a prévia sem apagar as demais e permite cancelar/aplicar',async()=>{
@@ -35,7 +35,42 @@ test('restaurar uma cor atualiza a prévia sem apagar as demais e permite cancel
  }
 });
 
-test('seletor mostra a intensidade salva e escolhe novas cores sólidas, com opção de restaurar padrão',async()=>{
+test('controles de degradê atualizam as amostras e guardam as duas cores ao desligar',async()=>{
+ const win=new Window({url:'http://localhost:3000'});
+ const replacements:Record<string,unknown>={window:win,document:win.document,HTMLElement:win.HTMLElement,Node:win.Node,IS_REACT_ACT_ENVIRONMENT:true};
+ const previous=new Map(Object.keys(replacements).map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
+ for(const [key,value] of Object.entries(replacements))Object.defineProperty(globalThis,key,{value,writable:true,configurable:true});
+ let unmount:(()=>void)|undefined;
+ try{
+  const {createRoot}=await import('react-dom/client');const {LinkAppearance,ThemeAppearance}=await import('../components/AppearanceControls');
+  const container=win.document.createElement('div');win.document.body.append(container);const root=createRoot(container as unknown as globalThis.HTMLElement);unmount=()=>root.unmount();
+  let linkDraft:LinkColors|null=null,themeDraft:BioConfig['theme']|null=null,applied:Partial<BioLink>|null=null;
+  const link={...defaultConfig.links[1],colors:{background:'#FF000024',backgroundEnd:'#0000FF24',gradientEnabled:true}};
+  await act(async()=>root.render(createElement(LinkAppearance,{key:'link',link,theme:defaultConfig.theme,onPreview:()=>{},onBack:()=>{},onDraft:v=>{linkDraft=v;},edit:v=>{applied=v;}})));
+  assert.ok(container.querySelector('[aria-label="Escolher Primeira cor do botão"]'));assert.ok(container.querySelector('[aria-label="Escolher Segunda cor do botão"]'));
+  const toggle=container.querySelector<HTMLInputElement>('.gradient-settings input[type=checkbox]')!;
+  assert.equal(toggle.checked,true);
+  await act(async()=>toggle.click());
+  assert.equal(linkDraft!.gradientEnabled,false);assert.equal(linkDraft!.background,'#FF000024');assert.equal(linkDraft!.backgroundEnd,'#0000FF24');assert.equal(applied,null);
+  assert.ok(!container.querySelector('[aria-label="Prévia do fundo do botão"]')!.getAttribute('style')!.includes('linear-gradient'));
+  await act(async()=>toggle.click());assert.equal(linkDraft!.gradientEnabled,true);
+  assert.ok(container.querySelector('[aria-label="Prévia do fundo do botão"]')!.getAttribute('style')!.includes('linear-gradient'));
+  await act(async()=>toggle.click());
+  await act(async()=>[...container.querySelectorAll('button')].find(b=>b.textContent?.includes('Aplicar cores'))!.click());
+  assert.equal(applied!.colors!.gradientEnabled,false);assert.equal(applied!.colors!.backgroundEnd,'#0000FF24');
+  const theme={...defaultConfig.theme,glow:'#F97316',secondaryGlow:'#A855F7'};
+  await act(async()=>root.render(createElement(ThemeAppearance,{key:'theme',theme,onBack:()=>{},onDraft:v=>{themeDraft=v;},onChange:()=>{}})));
+  assert.ok(container.querySelector('[aria-label="Escolher Primeira cor do fundo"]'));assert.ok(container.querySelector('[aria-label="Escolher Segunda cor do fundo"]'));
+  await act(async()=>container.querySelector<HTMLInputElement>('.gradient-settings input[type=checkbox]')!.click());
+  assert.equal(themeDraft!.backgroundGradientEnabled,false);assert.equal(themeDraft!.glow,'#F97316');assert.equal(themeDraft!.secondaryGlow,'#A855F7');
+  assert.equal(container.querySelector('.gradient-caption')!.textContent,'Degradê desativado · fundo liso');
+ }finally{
+  if(unmount)await act(async()=>unmount!());await win.happyDOM.abort();
+  for(const [key,descriptor] of previous){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}
+ }
+});
+
+test('seletor mantém a intensidade escolhida e avisa como a cor será aplicada',async()=>{
  const win=new Window({url:'http://localhost:3000'});
  const replacements:Record<string,unknown>={window:win,document:win.document,HTMLElement:win.HTMLElement,Node:win.Node,IS_REACT_ACT_ENVIRONMENT:true};
  const previous=new Map(Object.keys(replacements).map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
@@ -45,18 +80,18 @@ test('seletor mostra a intensidade salva e escolhe novas cores sólidas, com op�
   const {createRoot}=await import('react-dom/client');const {default:ColorControl}=await import('../components/ColorControl');
   const container=win.document.createElement('div');win.document.body.append(container);const root=createRoot(container as unknown as globalThis.HTMLElement);unmount=()=>root.unmount();
   const changes:(string|undefined)[]=[];
-  await act(async()=>root.render(createElement(ColorControl,{label:'Fundo do ícone',value:'#FFFFFF09',fallback:'#F9731624',alpha:true,onChange:(value)=>changes.push(value)})));
+  await act(async()=>root.render(createElement(ColorControl,{label:'Fundo do ícone',value:'#FFFFFF24',fallback:'#F9731624',alpha:true,onChange:(value)=>changes.push(value)})));
   await act(async()=>container.querySelector<HTMLButtonElement>('[aria-label="Escolher Fundo do ícone"]')!.click());
   assert.ok(container.querySelector('dialog[open]'));
-  assert.equal(container.querySelector<HTMLInputElement>('input[type=range]')!.value,'4');
-  assert.ok(container.querySelector('.color-transparency-note')?.textContent?.includes('4%'));
+  assert.equal(container.querySelector<HTMLInputElement>('input[type=range]')!.value,'14');
+  assert.ok(container.querySelector('.color-transparency-note')?.textContent?.includes('14%'));
   await act(async()=>container.querySelector<HTMLButtonElement>('[aria-label="Cor #FFFFFF"]')!.click());
-  assert.equal(container.querySelector<HTMLInputElement>('input[type=range]')!.value,'100');
-  assert.equal(container.querySelector('.color-transparency-note'),null);
+  assert.equal(container.querySelector<HTMLInputElement>('input[type=range]')!.value,'14');
+  assert.ok(container.querySelector('.color-transparency-note')?.textContent?.includes('Essa cor será aplicada com 14%'));
   assert.equal(changes.length,0,'a paleta ainda não aplica a alteração');
   await act(async()=>container.querySelector<HTMLButtonElement>('[aria-label="Cor #14B8A6"]')!.click());
   const choose=[...container.querySelectorAll<HTMLButtonElement>('dialog button')].find(b=>b.textContent?.includes('Usar esta cor'))!;
-  await act(async()=>choose.click());assert.equal(changes[0],'#14B8A6');
+  await act(async()=>choose.click());assert.equal(changes[0],'#14B8A624');
   await act(async()=>container.querySelector<HTMLButtonElement>('[aria-label="Escolher Fundo do ícone"]')!.click());
   const solid=[...container.querySelectorAll<HTMLButtonElement>('dialog button')].find(b=>b.textContent==='Deixar cor sólida')!;
   await act(async()=>solid.click());
