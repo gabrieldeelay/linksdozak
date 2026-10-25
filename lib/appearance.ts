@@ -34,7 +34,7 @@ export function themeVariables(t:BioConfig['theme']):Record<string,string>{
 }
 export function linkVariables(l:BioLink,theme?:BioConfig['theme']):Record<string,string>{
  const c=l.colors||{},v:Record<string,string>={};
- if(theme){const defaults=linkDefaultColors(l,theme);v['--link-auto-icon-bg']=defaults.iconBackground;v['--link-auto-icon-color']=defaults.iconColor;}
+ if(theme){const defaults=linkDefaultColors(l,theme);v['--link-auto-icon-bg']=defaults.iconBackground;v['--link-auto-icon-color']=defaults.iconColor;if(l.effects?.length)v['--link-effect-color']=(c.border||c.background||c.iconColor||theme.accent).slice(0,7);}
  const mapping={iconBackground:'--link-icon-bg',iconColor:'--link-icon-color',title:'--link-title',description:'--link-description',border:'--link-border',hoverBackground:'--link-hover-bg',hoverBorder:'--link-hover-border'} as const;
  for(const [key,variable] of Object.entries(mapping))if(c[key as LinkColorKey])v[variable]=c[key as LinkColorKey]!;
  if(c.background||c.backgroundEnd||c.gradientEnabled!==undefined){

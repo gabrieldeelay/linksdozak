@@ -44,6 +44,9 @@ test('prévia mantém todos os cartões após trocar ícone, cores e visibilidad
  assert.equal(container.querySelectorAll('[data-bio-link]').length,6);
  assert.equal(container.querySelector('[data-bio-link="app"]')?.getAttribute('data-revealed'),'true');
  assert.ok(messages.some(m=>m.type==='bio-preview-applied'&&m.revision===4&&m.links===6));
+ config=structuredClone(config);config.links[2].effects=['pulse','shimmer'];await receive(5);
+ const animated=container.querySelector('[data-bio-link="app"]')!;assert.equal(animated.getAttribute('data-revealed'),'true');assert.equal(animated.getAttribute('data-link-effects'),'pulse shimmer');assert.equal(animated.querySelectorAll('.link-fx').length,2);
+ config=structuredClone(config);config.links[2].effects=[];await receive(6);assert.equal(animated.getAttribute('data-link-effects'),null);assert.equal(animated.querySelectorAll('.link-fx').length,0);assert.equal(animated.getAttribute('data-revealed'),'true');
  }finally{
  if(unmount)await act(async()=>unmount!());await win.happyDOM.abort();
  for(const [key,descriptor] of previous){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}

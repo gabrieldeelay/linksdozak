@@ -490,20 +490,7 @@ a:focus-visible,button:focus-visible{
 .card:active,.btn:active{transform:translateY(-3px);transition-duration:.12s}
 .btn:active{transform:translateY(-1px) scale(.995)}
 
-/* M-05 · shine sweep — passada de 1,5s + 3s de pausa (ciclo 4,5s) */
-.card--hero::after,.btn::after{
-  content:'';position:absolute;top:-60%;left:-70%;
-  width:42%;height:220%;pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
-  animation:sweep 4.5s var(--ease) infinite;
-}
-@keyframes sweep{
-  0%  {transform:rotate(16deg) translateX(0);opacity:0}
-  5%  {opacity:1}
-  30% {transform:rotate(16deg) translateX(430%);opacity:1}
-  35% {transform:rotate(16deg) translateX(430%);opacity:0}
-  100%{transform:rotate(16deg) translateX(430%);opacity:0}
-}
+/* Continuous link effects are opt-in and defined below. */
 
 /* M-06 · anel do avatar */
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -685,3 +672,22 @@ a:focus-visible,button:focus-visible{
 .bio-root .card[data-link-border]:hover,.bio-root .btn[data-link-border]:hover{border-color:var(--link-hover-border,var(--link-border))}
 .bio-root .card[data-hover-border]:hover,.bio-root .btn[data-hover-border]:hover{border-color:var(--link-hover-border)}
 }
+
+/* Optional per-link effects use their own layers so scroll entrances and hover
+   transforms remain independent. Empty effect settings render no layers. */
+.bio-root .link-fx{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;opacity:0}
+.bio-root.no-motion .link-fx{display:none}
+@media(prefers-reduced-motion:no-preference){
+ .bio-root:not(.no-motion) .link-fx--pulse{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--link-effect-color,var(--blue)) 75%,transparent);animation:link-pulse 2.8s ease-in-out infinite both}
+ .bio-root:not(.no-motion) .link-fx--glow{box-shadow:inset 0 0 14px color-mix(in srgb,var(--link-effect-color,var(--blue)) 28%,transparent),inset 0 0 0 1px var(--link-effect-color,var(--blue)),0 0 20px color-mix(in srgb,var(--link-effect-color,var(--blue)) 38%,transparent);animation:link-edge-glow 3.6s ease-in-out infinite both}
+ .bio-root:not(.no-motion) .link-fx--shimmer{overflow:hidden;opacity:1}
+ .bio-root:not(.no-motion) .link-fx--shimmer::after{content:'';position:absolute;inset:-60% -80%;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.24) 49%,transparent 63%);animation:link-shimmer 4.8s cubic-bezier(.35,0,.25,1) infinite both}
+ .bio-root:not(.no-motion) [data-link-effects~="float"]>.tile,.bio-root:not(.no-motion) .btn[data-link-effects~="float"]>.ic{animation:link-icon-float 4s ease-in-out infinite both}
+ .bio-root:not(.no-motion) .link-fx,.bio-root:not(.no-motion) .link-fx::after,.bio-root:not(.no-motion) [data-link-effects~="float"]>.tile,.bio-root:not(.no-motion) .btn[data-link-effects~="float"]>.ic{animation-play-state:paused;animation-delay:calc(var(--scroll-delay,0ms) + 1400ms)}
+ .bio-root:not(.no-motion) [data-revealed="true"]>.link-fx,.bio-root:not(.no-motion) [data-revealed="true"]>.link-fx::after,.bio-root:not(.no-motion) [data-revealed="true"][data-link-effects~="float"]>.tile,.bio-root:not(.no-motion) .btn[data-revealed="true"][data-link-effects~="float"]>.ic,.bio-root:not(.no-motion) .dock.is-on .link-fx,.bio-root:not(.no-motion) .dock.is-on .link-fx::after{animation-play-state:running}
+ @keyframes link-pulse{0%,100%{transform:scale(.96);opacity:.15}50%{transform:scale(1);opacity:.85}}
+ @keyframes link-edge-glow{0%,100%{opacity:.15}50%{opacity:.85}}
+ @keyframes link-shimmer{0%,12%{transform:translateX(-80%);opacity:0}16%{opacity:1}40%{transform:translateX(80%);opacity:1}45%,100%{transform:translateX(80%);opacity:0}}
+ @keyframes link-icon-float{0%,100%{translate:0 0}50%{translate:0 -5px}}
+}
+@media(prefers-reduced-motion:reduce){.bio-root .link-fx{display:none}}

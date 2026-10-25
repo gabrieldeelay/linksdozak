@@ -1,11 +1,13 @@
 import { z } from 'zod';
 export const iconNames=['marca','telegram','app','robot','trade','instagram','youtube','whatsapp','link','mail','globe','music','video','graduation','shield','star','calendar','store','github','tiktok'] as const;
 export type IconName=typeof iconNames[number];
+export const linkEffectNames=['pulse','shimmer','float','glow'] as const;
+export type LinkEffect=typeof linkEffectNames[number];
 const image=z.string().max(1800000).refine(v=>/^\/assets\/[a-z0-9.-]+$/i.test(v)||/^data:image\/(png|jpeg|webp);base64,[a-z0-9+/=]+$/i.test(v)||/^https:\/\//.test(v),'Use uma imagem HTTPS ou envie um arquivo PNG, JPG ou WebP.');
 const url=z.url().max(2048).refine(v=>['http:','https:','mailto:','tel:'].includes(new URL(v).protocol),'Use um endereço http, https, mailto ou tel.');
 const color=z.string().regex(/^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/i,'Use uma cor hexadecimal.');
 export const linkColorsSchema=z.object({background:color.optional(),backgroundEnd:color.optional(),gradientEnabled:z.boolean().optional(),iconBackground:color.optional(),iconColor:color.optional(),title:color.optional(),description:color.optional(),border:color.optional(),hoverBackground:color.optional(),hoverBorder:color.optional()});
-export const linkSchema=z.object({id:z.string().min(1).max(80),title:z.string().min(1).max(100),description:z.string().max(200),url,icon:z.enum(iconNames),enabled:z.boolean(),featured:z.boolean(),live:z.boolean(),direct:z.boolean(),colors:linkColorsSchema.optional()});
+export const linkSchema=z.object({id:z.string().min(1).max(80),title:z.string().min(1).max(100),description:z.string().max(200),url,icon:z.enum(iconNames),enabled:z.boolean(),featured:z.boolean(),live:z.boolean(),direct:z.boolean(),colors:linkColorsSchema.optional(),effects:z.array(z.enum(linkEffectNames)).max(2,'Escolha até dois efeitos por link.').refine(v=>new Set(v).size===v.length,'Não repita o mesmo efeito.').optional()});
 export const configSchema=z.object({
   profile:z.object({name:z.string().min(1).max(100),handle:z.string().max(80),bio:z.string().max(500),badge:z.string().max(80),avatar:image,hero:image,heroMobile:image,logo:image}),
   theme:z.object({accent:z.string().regex(/^#[0-9a-f]{6}$/i),background:z.string().regex(/^#[0-9a-f]{6}$/i),motion:z.boolean(),passUtm:z.boolean(),glow:color.optional(),secondaryGlow:color.optional(),glowStrength:z.number().min(0).max(100).optional(),backgroundGradientEnabled:z.boolean().optional(),surface:color.optional(),text:color.optional(),mutedText:color.optional()}),
