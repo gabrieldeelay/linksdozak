@@ -3,6 +3,7 @@ import { useState,useEffect,useRef,type CSSProperties } from 'react';
 import { type BioConfig,type BioLink,configSchema,destination } from '@/lib/config';
 import { Icon } from './Icon';
 import { themeVariables,linkVariables,linkAttributes } from '@/lib/appearance';
+import { createDominoTimeline } from '@/lib/reveal';
 const classes:Record<string,string>={telegram:'tg',instagram:'ig',youtube:'yt',app:'app',whatsapp:'wa'};
 export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:boolean}){
  const [config,setConfig]=useState(initial),[copied,setCopied]=useState(false),[search,setSearch]=useState(''),[sticky,setSticky]=useState(false);
@@ -25,14 +26,16 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  useEffect(()=>{
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches||!c.theme.motion;
  const seen=new WeakSet<Element>();
+ const domino=createDominoTimeline(260);
  const io=new IntersectionObserver(entries=>{
    const entering=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
    let scrollIndex=0;
-   entering.forEach(entry=>{const el=entry.target as HTMLElement;if(el.classList.contains('scroll-rv'))el.style.setProperty('--scroll-delay',`${Math.min(scrollIndex++,4)*110}ms`);el.classList.add('in');});
+   const now=performance.now();
+   entering.forEach(entry=>{const el=entry.target as HTMLElement;if(el.classList.contains('in'))return;if(el.classList.contains('scroll-rv')){const delay=reduced?0:el.classList.contains('card')?domino.reserve(now):scrollIndex++*150;el.style.setProperty('--scroll-delay',`${delay}ms`);}el.classList.add('in');});
    for(const entry of entries){
      // Replay when an element comes back into view, without hiding cards that
      // are still partly visible at the viewport boundary.
-     if(!entry.isIntersecting&&(entry.boundingClientRect.bottom<=0||entry.boundingClientRect.top>=innerHeight))entry.target.classList.remove('in');
+     if(!entry.isIntersecting&&(entry.boundingClientRect.bottom<=0||entry.boundingClientRect.top>=innerHeight)){(entry.target as HTMLElement).style.setProperty('--scroll-delay','0ms');entry.target.classList.remove('in');}
    }
  },{threshold:.12,rootMargin:'0px 0px -4% 0px'});
  const observe=(node:Element)=>{const elements=[...(node.matches('.rv')?[node]:[]),...node.querySelectorAll('.rv')];for(const el of elements){if(seen.has(el))continue;seen.add(el);if(el.closest('main')||el.matches('footer'))el.classList.add('scroll-rv');io.observe(el);}};
@@ -49,7 +52,7 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  const active=c.links.filter(l=>l.enabled);const closing=active.find(l=>l.id===c.closing.linkId);
  function card(l:BioLink,index:number){return <a key={l.id} className={`card card--${classes[l.icon]||'generic'} ${l.featured?'card--hero':''} rv`} data-bio-link={l.id} {...linkAttributes(l)} style={{'--d':index,...linkVariables(l)} as CSSProperties} href={destination(l,c.theme.passUtm,search)} target="_blank" rel="noopener noreferrer" aria-label={`${l.title} — abre em nova aba`} onClick={e=>{if(preview)e.preventDefault();}}><span className="tile"><Icon name={l.icon} monochrome={!!l.colors?.iconColor}/></span><span className="card__txt"><span className="card__t"><span className="card__label">{l.title}</span>{l.live&&<i className="live" aria-label="Comunidade ativa"/>}</span><span className="card__s">{l.description}</span></span><span className="card__go"><Icon name="arrow"/></span></a>;}
  const style=themeVariables(c.theme) as CSSProperties;
- return <div ref={root} className={`bio-root js ${c.theme.motion?'':'no-motion'}`} style={style}>
+ return <div ref={root} className={`bio-root js domino-reveal ${c.theme.motion?'':'no-motion'}`} style={style}>
  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"/><link rel="stylesheet" href="/bio.css"/>
  <div className="aurora" aria-hidden="true"><i/><i/></div><div className="spot" ref={spot} aria-hidden="true"/>
  <header className="hero" ref={hero}><div className="hero__media" ref={media}><picture><source media="(max-width:719px)" srcSet={c.profile.heroMobile}/><img className="hero__img is-ready" src={c.profile.hero} fetchPriority="high" alt="Foto de capa"/></picture></div><div className="hero__scrim"/><div className="hero__glow"/>

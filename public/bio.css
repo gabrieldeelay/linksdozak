@@ -664,6 +664,12 @@ a:focus-visible,button:focus-visible{
  .bio-root .card--hero .tile{width:40px;height:40px}
 }
 .preview-focus{outline:2px solid var(--blue-3);outline-offset:6px}
+/* Activity belongs to the label, rather than the right-hand arrow. */
+.bio-root .card__t{display:block}
+.bio-root .card__label{display:inline;min-width:0}
+.bio-root .card__t .live{display:inline-block;width:7px;height:7px;margin:0 0 0 8px;vertical-align:middle;top:-1px}
+.bio-root .live::after{animation:link-live-pulse 2.5s ease-out infinite}
+@keyframes link-live-pulse{0%{box-shadow:0 0 0 0 rgba(53,224,192,.45)}75%,100%{box-shadow:0 0 0 4px rgba(53,224,192,0)}}
 .bio-root .card[data-link-bg]:focus-visible,.bio-root .btn[data-link-bg]:focus-visible{background:var(--link-hover-bg,var(--link-bg))}
 .bio-root .card[data-hover-bg]:focus-visible,.bio-root .btn[data-hover-bg]:focus-visible{background:var(--link-hover-bg)}
 .bio-root .card[data-link-border]:focus-visible,.bio-root .btn[data-link-border]:focus-visible{border-color:var(--link-hover-border,var(--link-border))}
