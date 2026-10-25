@@ -4,7 +4,7 @@ export type IconName=typeof iconNames[number];
 export const linkEffectNames=['pulse','shimmer','float','glow'] as const;
 export type LinkEffect=typeof linkEffectNames[number];
 const image=z.string().max(1800000).refine(v=>/^\/assets\/[a-z0-9.-]+$/i.test(v)||/^data:image\/(png|jpeg|webp);base64,[a-z0-9+/=]+$/i.test(v)||/^https:\/\//.test(v),'Use uma imagem HTTPS ou envie um arquivo PNG, JPG ou WebP.');
-const url=z.url().max(2048).refine(v=>['http:','https:','mailto:','tel:'].includes(new URL(v).protocol),'Use um endereço http, https, mailto ou tel.');
+const url=z.url().max(2048).refine(v=>{try{return ['http:','https:','mailto:','tel:'].includes(new URL(v).protocol);}catch{return false;}},'Use um endereço http, https, mailto ou tel.');
 const color=z.string().regex(/^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/i,'Use uma cor hexadecimal.');
 export const linkColorsSchema=z.object({background:color.optional(),backgroundEnd:color.optional(),gradientEnabled:z.boolean().optional(),iconBackground:color.optional(),iconColor:color.optional(),title:color.optional(),description:color.optional(),border:color.optional(),hoverBackground:color.optional(),hoverBorder:color.optional()});
 export const linkSchema=z.object({id:z.string().min(1).max(80),title:z.string().min(1).max(100),description:z.string().max(200),url,icon:z.enum(iconNames),enabled:z.boolean(),featured:z.boolean(),live:z.boolean(),direct:z.boolean(),colors:linkColorsSchema.optional(),effects:z.array(z.enum(linkEffectNames)).max(2,'Escolha até dois efeitos por link.').refine(v=>new Set(v).size===v.length,'Não repita o mesmo efeito.').optional()});
@@ -13,7 +13,7 @@ export const configSchema=z.object({
   theme:z.object({accent:z.string().regex(/^#[0-9a-f]{6}$/i),background:z.string().regex(/^#[0-9a-f]{6}$/i),motion:z.boolean(),passUtm:z.boolean(),glow:color.optional(),secondaryGlow:color.optional(),glowStrength:z.number().min(0).max(100).optional(),backgroundGradientEnabled:z.boolean().optional(),surface:color.optional(),text:color.optional(),mutedText:color.optional()}),
   links:z.array(linkSchema).max(50).refine(v=>new Set(v.map(x=>x.id)).size===v.length,'IDs duplicados.'),
   context:z.object({enabled:z.boolean(),items:z.array(z.object({title:z.string().max(80),description:z.string().max(200),icon:z.enum(iconNames)})).max(6)}),
-  closing:z.object({enabled:z.boolean(),title:z.string().max(150),linkId:z.string().max(80),sticky:z.boolean()}),
+  closing:z.object({enabled:z.boolean(),title:z.string().max(150),linkId:z.string().max(80),sticky:z.boolean(),url:z.union([z.literal(''),url]).optional()}),
   footer:z.object({copyright:z.string().max(200),disclaimer:z.string().max(500)})
 });
 export type BioConfig=z.infer<typeof configSchema>;
@@ -31,6 +31,12 @@ export const defaultConfig:BioConfig={
  closing:{enabled:true,title:'Todo o resto começa aqui.',linkId:'cadastro',sticky:true},
  footer:{copyright:'© 2026 · Todos os direitos reservados',disclaimer:'Conteúdo educacional. Operações no mercado financeiro envolvem risco e não há garantia de resultado.'}
 };
+export function resolveClosingLink(config:BioConfig):BioLink|undefined{
+ const base=config.links.find(link=>link.enabled&&link.id===config.closing.linkId);
+ if(!config.closing.url)return base;
+ if(base)return {...base,url:config.closing.url};
+ return {id:'cadastro-final',title:'Realizar cadastro',description:'',url:config.closing.url,icon:'marca',enabled:true,featured:true,live:false,direct:false};
+}
 export function destination(link:BioLink,pass:boolean,search=''){
  const u=new URL(link.url);
  if(pass&&!link.direct&&['https:','http:'].includes(u.protocol)){

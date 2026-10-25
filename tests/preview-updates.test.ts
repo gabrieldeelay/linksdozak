@@ -47,6 +47,9 @@ test('prévia mantém todos os cartões após trocar ícone, cores e visibilidad
  config=structuredClone(config);config.links[2].effects=['pulse','shimmer'];await receive(5);
  const animated=container.querySelector('[data-bio-link="app"]')!;assert.equal(animated.getAttribute('data-revealed'),'true');assert.equal(animated.getAttribute('data-link-effects'),'pulse shimmer');assert.equal(animated.querySelectorAll('.link-fx').length,2);
  config=structuredClone(config);config.links[2].effects=[];await receive(6);assert.equal(animated.getAttribute('data-link-effects'),null);assert.equal(animated.querySelectorAll('.link-fx').length,0);assert.equal(animated.getAttribute('data-revealed'),'true');
+ config=structuredClone(config);config.theme.passUtm=false;config.closing.url='https://example.com/cadastro-final';await receive(7);
+ assert.equal(container.querySelector('.close__b')?.getAttribute('href'),'https://example.com/cadastro-final');assert.equal(container.querySelector('.dock a')?.getAttribute('href'),'https://example.com/cadastro-final');assert.equal(container.querySelector('[data-bio-link="cadastro"]')?.getAttribute('href'),defaultConfig.links[0].url);
+ config=structuredClone(config);config.closing.url='';await receive(8);assert.equal(container.querySelector('.close__b')?.getAttribute('href'),defaultConfig.links[0].url);
  }finally{
  if(unmount)await act(async()=>unmount!());await win.happyDOM.abort();
  for(const [key,descriptor] of previous){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}

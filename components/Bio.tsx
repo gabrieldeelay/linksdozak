@@ -1,6 +1,6 @@
 'use client';
 import { useState,useEffect,useRef,type CSSProperties } from 'react';
-import { type BioConfig,type BioLink,configSchema,destination } from '@/lib/config';
+import { type BioConfig,type BioLink,configSchema,resolveClosingLink,destination } from '@/lib/config';
 import { Icon } from './Icon';
 import { themeVariables,linkVariables,linkAttributes } from '@/lib/appearance';
 import { createDominoTimeline } from '@/lib/reveal';
@@ -53,7 +53,7 @@ export default function Bio({initial,preview=false}:{initial:BioConfig;preview?:
  addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});if(matchMedia('(hover:hover) and (pointer:fine)').matches)addEventListener('mousemove',mouse,{passive:true});update();return()=>{io.disconnect();additions.disconnect();cancelAnimationFrame(raf);removeEventListener('scroll',scroll);removeEventListener('resize',scroll);removeEventListener('mousemove',mouse);};
  },[previewReady,c.theme.motion,c.links.length]);
  async function copy(){try{await navigator.clipboard.writeText(c.profile.handle);setCopied(true);setTimeout(()=>setCopied(false),1500);}catch{setCopied(false);}}
- const active=c.links.filter(l=>l.enabled);const closing=active.find(l=>l.id===c.closing.linkId);
+ const active=c.links.filter(l=>l.enabled);const closing=resolveClosingLink(c);
  function card(l:BioLink,index:number){return <a key={l.id} className={`card card--${classes[l.icon]||'generic'} ${l.featured?'card--hero':''} rv`} data-bio-link={l.id} {...linkAttributes(l)} {...linkEffectAttributes(l)} style={{'--d':index,...linkVariables(l,c.theme)} as CSSProperties} href={destination(l,c.theme.passUtm,search)} target="_blank" rel="noopener noreferrer" aria-label={`${l.title} — abre em nova aba`} onClick={e=>{if(preview)e.preventDefault();}}><LinkEffects effects={l.effects}/><span className="tile"><Icon name={l.icon} monochrome={!!l.colors?.iconColor}/></span><span className="card__txt"><span className="card__t"><span className="card__label">{l.title}</span>{l.live&&<i className="live" aria-label="Comunidade ativa"/>}</span><span className="card__s">{l.description}</span></span><span className="card__go"><Icon name="arrow"/></span></a>;}
  const style=themeVariables(c.theme) as CSSProperties;
  if(!previewReady)return <div className="preview-loading" role="status" style={{background:c.theme.background,color:'#d7e4f8',fontFamily:'system-ui',padding:24,minHeight:'100svh'}}>Carregando sua prévia…</div>;
