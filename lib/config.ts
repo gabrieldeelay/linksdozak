@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const iconNames=['marca','telegram','app','instagram','youtube','whatsapp','link','mail','globe','music','video','graduation','shield','star','calendar','store','github','tiktok'] as const;
+export const iconNames=['marca','telegram','app','robot','trade','instagram','youtube','whatsapp','link','mail','globe','music','video','graduation','shield','star','calendar','store','github','tiktok'] as const;
 export type IconName=typeof iconNames[number];
 const image=z.string().max(1800000).refine(v=>/^\/assets\/[a-z0-9.-]+$/i.test(v)||/^data:image\/(png|jpeg|webp);base64,[a-z0-9+/=]+$/i.test(v)||/^https:\/\//.test(v),'Use uma imagem HTTPS ou envie um arquivo PNG, JPG ou WebP.');
 const url=z.url().max(2048).refine(v=>['http:','https:','mailto:','tel:'].includes(new URL(v).protocol),'Use um endereço http, https, mailto ou tel.');
